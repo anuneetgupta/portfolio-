@@ -119,9 +119,9 @@ export default function Projects() {
             </div>
 
             <div className="flex flex-wrap gap-4 pt-4">
-              <button className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2">
+              <a href="https://dharma-set.vercel.app" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2">
                 <ExternalLink className="w-5 h-5" /> Live Application
-              </button>
+              </a>
             </div>
           </div>
         </motion.div>

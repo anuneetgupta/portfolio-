@@ -178,25 +178,25 @@ export default function Contact() {
               <div className="p-6 rounded-2xl bg-gray-900/40 border border-gray-800">
                 <Mail className="w-8 h-8 text-blue-500 mb-4" />
                 <h4 className="font-semibold text-white mb-1">Email</h4>
-                <p className="text-sm text-gray-400 truncate">hello@example.com</p>
+                <p className="text-sm text-gray-400 truncate">guptaanuneet10june@gmail.com</p>
               </div>
               <div className="p-6 rounded-2xl bg-gray-900/40 border border-gray-800">
                 <MapPin className="w-8 h-8 text-purple-500 mb-4" />
                 <h4 className="font-semibold text-white mb-1">Location</h4>
-                <p className="text-sm text-gray-400">San Francisco, CA</p>
+                <p className="text-sm text-gray-400">Kanpur, UP, India</p>
               </div>
             </div>
 
             {/* Social Links */}
             <div className="flex gap-4">
-              <a href="#" className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-600 transition-all">
+              <a href="https://github.com/anuneetgupta" target="_blank" rel="noopener noreferrer" className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-600 transition-all">
                 <GitBranch className="w-6 h-6" />
               </a>
-              <a href="#" className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/50 transition-all">
+              <a href="https://linkedin.com/in/anuneet-gupta" target="_blank" rel="noopener noreferrer" className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/50 transition-all">
                 <Briefcase className="w-6 h-6" />
               </a>
-              <a href="#" className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-[#1DA1F2] hover:border-[#1DA1F2]/50 transition-all">
-                <MessageSquare className="w-6 h-6" />
+              <a href="tel:+917392086340" className="p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-green-500 hover:border-green-500/50 transition-all">
+                <Phone className="w-6 h-6" />
               </a>
             </div>
             

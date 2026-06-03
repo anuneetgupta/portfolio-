@@ -12,20 +12,20 @@ interface Skill {
 }
 
 const skills: Skill[] = [
-  { name: "Machine Learning", experience: "3+ Years", projects: "Disease Detection, Pricing", proficiency: 95 },
-  { name: "Python", experience: "4 Years", projects: "All Backend & ML", proficiency: 98 },
-  { name: "Computer Vision", experience: "2 Years", projects: "Samarpan, Color Detection", proficiency: 90 },
-  { name: "OpenCV", experience: "2 Years", projects: "Proctoring Systems", proficiency: 88 },
-  { name: "LLM Engineering", experience: "1.5 Years", projects: "Dharma Setu", proficiency: 92 },
-  { name: "NLP", experience: "2 Years", projects: "Spam Detection", proficiency: 85 },
-  { name: "Prompt Engineering", experience: "1.5 Years", projects: "Dharma Setu, Samarpan", proficiency: 96 },
-  { name: "AI Agents", experience: "1 Year", projects: "Automated Workflows", proficiency: 80 },
-  { name: "SQL", experience: "3 Years", projects: "Database Architecture", proficiency: 85 },
-  { name: "Git", experience: "4 Years", projects: "Version Control", proficiency: 90 },
-  { name: "Vercel", experience: "2 Years", projects: "Frontend Deployment", proficiency: 92 },
-  { name: "FastAPI", experience: "2 Years", projects: "ML Model APIs", proficiency: 88 },
-  { name: "Next.js", experience: "2 Years", projects: "Dharma Setu Frontend", proficiency: 90 },
-  { name: "React", experience: "3 Years", projects: "Various Dashboards", proficiency: 95 },
+  { name: "Python", experience: "2 Years", projects: "Backend & ML", proficiency: 95 },
+  { name: "SQL", experience: "2 Years", projects: "Database Queries", proficiency: 85 },
+  { name: "HTML/CSS", experience: "2 Years", projects: "Frontend Structure", proficiency: 90 },
+  { name: "Machine Learning", experience: "2 Years", projects: "Disease Detection", proficiency: 92 },
+  { name: "Scikit-learn", experience: "2 Years", projects: "Model Building", proficiency: 90 },
+  { name: "Pandas/NumPy", experience: "2 Years", projects: "Data Preprocessing", proficiency: 95 },
+  { name: "Computer Vision", experience: "1.5 Years", projects: "Samarpan, Color Detection", proficiency: 88 },
+  { name: "OpenCV", experience: "1.5 Years", projects: "Face-based Proctoring", proficiency: 85 },
+  { name: "NLP", experience: "1.5 Years", projects: "Spam Detection", proficiency: 85 },
+  { name: "LLM APIs", experience: "1 Year", projects: "Dharma Setu", proficiency: 92 },
+  { name: "AI Agents", experience: "1 Year", projects: "Foundational Workflow", proficiency: 80 },
+  { name: "Jupyter Notebook", experience: "2 Years", projects: "EDA & Prototyping", proficiency: 95 },
+  { name: "Git", experience: "2 Years", projects: "Version Control", proficiency: 90 },
+  { name: "Vercel", experience: "1 Year", projects: "Dharma Setu Frontend", proficiency: 90 },
 ];
 
 export default function Skills() {

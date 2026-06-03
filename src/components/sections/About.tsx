@@ -53,15 +53,15 @@ export default function About() {
             Bridging the gap between <span className="text-blue-400">theory</span> and <span className="text-blue-400">production</span>.
           </h2>
           <p className="text-xl text-gray-400 leading-relaxed font-light">
-            I am a final-year BCA student with deep expertise in Machine Learning, Computer Vision, NLP, and Full Stack AI Product Development. 
+            Final-year BCA student (CGPA 8.4) with hands-on experience in machine learning, NLP, and Computer Vision. Built Samarpan an AI-powered quiz and proctoring platform that won 3rd place at CSJMUIF Ideathon 2026.
           </p>
           <p className="text-lg text-gray-500 leading-relaxed">
-            My core philosophy is that an AI model is only as good as the product it powers. I specialize in taking complex architectures—whether it's an LLM RAG pipeline or a real-time computer vision system—and deploying them into scalable, user-centric applications that solve actual problems.
+            Also built and deployed Dharma Setu, a full-stack LLM-powered product live in production. Comfortable across the full ML pipeline from Data Preprocessing to model deployment, and experienced connecting LLM APIs to real user-facing products.
           </p>
           
           <div className="pt-8 grid grid-cols-2 gap-6">
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-              <h3 className="text-4xl font-bold text-white mb-2">3+</h3>
+              <h3 className="text-4xl font-bold text-white mb-2">2+</h3>
               <p className="text-gray-400 text-sm font-medium uppercase tracking-wider">Years Experience</p>
             </div>
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">

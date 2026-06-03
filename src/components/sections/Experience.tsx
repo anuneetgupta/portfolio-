@@ -6,41 +6,37 @@ import { Briefcase, Calendar, MapPin, ChevronRight, GraduationCap } from "lucide
 const experiences = [
   {
     id: 1,
-    role: "AI Engineer Intern",
-    company: "TechNova AI",
-    location: "Remote",
-    period: "Jun 2025 - Present",
-    type: "work",
+    role: "Bachelor of Computer Applications (BCA)",
+    company: "CSJMU, Kanpur",
+    location: "Kanpur, UP",
+    period: "2nd Year (Pursuing)",
+    type: "education",
     description: [
-      "Developed a computer vision pipeline for real-time anomaly detection achieving 95% accuracy.",
-      "Optimized PyTorch models for edge deployment using TensorRT, reducing latency by 40%.",
-      "Collaborated with cross-functional teams to integrate AI models into the main web platform."
+      "CGPA: 8.4 / 10",
+      "Winner (3rd place) at CSJMUIF Ideathon 2026 for building Samarpan."
     ]
   },
   {
     id: 2,
-    role: "Full Stack Developer",
-    company: "Freelance",
-    location: "Global",
-    period: "Jan 2024 - May 2025",
-    type: "work",
+    role: "Intermediate (PCM)",
+    company: "Air Force School",
+    location: "Gorakhpur, UP",
+    period: "Completed",
+    type: "education",
     description: [
-      "Built responsive, full-stack web applications using React, Next.js, and Node.js for 10+ clients.",
-      "Implemented secure authentication flows and robust state management for scalable applications.",
-      "Designed dynamic UI/UX incorporating Framer Motion and 3D elements for enhanced engagement."
+      "Percentage: 80%",
+      "Physics, Chemistry, and Mathematics."
     ]
   },
   {
     id: 3,
-    role: "Bachelor of Technology in Computer Science",
-    company: "University of Technology",
-    location: "City, State",
-    period: "Aug 2023 - May 2027",
+    role: "High School",
+    company: "Stepping Stone Inter College",
+    location: "Gorakhpur, UP",
+    period: "Completed",
     type: "education",
     description: [
-      "Specialization in Artificial Intelligence and Machine Learning.",
-      "Relevant Coursework: Data Structures, Algorithms, Neural Networks, Computer Vision, Web Development.",
-      "President of the AI Innovation Club, organizing hackathons and weekly tech talks."
+      "Percentage: 92%"
     ]
   }
 ];

@@ -98,10 +98,10 @@ export default function Achievements() {
               </div>
               
               <h3 className="text-4xl font-bold text-white mb-4">CSJMUIF Ideathon 2026</h3>
-              <h4 className="text-2xl text-yellow-500 font-medium mb-6">Winner / First Place</h4>
+              <h4 className="text-2xl text-yellow-500 font-medium mb-6">IIIrd Rank / 3rd Place</h4>
               
               <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                Secured the top position against hundreds of participants by pitching and presenting the Samarpan AI proctoring and quiz generation system. Recognized for innovation, technical execution, and real-world applicability.
+                Secured the 3rd rank against hundreds of participants by pitching and presenting the Samarpan AI proctoring and quiz generation system. Recognized for innovation, technical execution, and real-world applicability.
               </p>
 
               <div className="flex items-center gap-4">

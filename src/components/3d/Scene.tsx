@@ -3,7 +3,6 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import NeuralNetwork from "./NeuralNetwork";
-import Avatar from "./Avatar";
 import { Preload } from "@react-three/drei";
 
 export default function Scene() {
@@ -14,7 +13,6 @@ export default function Scene() {
         <ambientLight intensity={0.5} />
         <Suspense fallback={null}>
           <NeuralNetwork />
-          <Avatar />
           <Preload all />
         </Suspense>
       </Canvas>
