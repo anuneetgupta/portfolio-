@@ -72,6 +72,7 @@ export default function About() {
                   src="/avatar.png"
                   alt="Anuneet Gupta"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover object-top scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />

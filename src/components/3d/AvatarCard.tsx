@@ -115,6 +115,7 @@ export default function AvatarCard() {
             src="/avatar.png"
             alt="Anuneet Gupta - AI/ML Engineer"
             fill
+            sizes="(max-width: 768px) 300px, 360px"
             className="object-contain drop-shadow-[0_0_40px_rgba(59,130,246,0.25)]"
             priority
           />
