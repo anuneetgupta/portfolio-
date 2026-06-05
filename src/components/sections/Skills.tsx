@@ -91,14 +91,17 @@ export default function Skills() {
   }, [isPaused]);
 
   return (
-    <section className="relative w-full min-h-screen py-20 overflow-hidden flex flex-col items-center justify-center text-white z-10">
+    <section className="relative w-full min-h-screen py-20 overflow-hidden flex flex-col items-center justify-center text-white z-10 border-t border-gray-900">
       
       <div className="text-center mb-16 space-y-4 z-20">
+        <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
+          Expertise
+        </div>
         <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4">
           <BrainCircuit className="w-10 h-10 text-blue-500" />
           Technical Arsenal
         </h2>
-        <p className="text-gray-400 text-lg">Hover over a node to see proficiency details.</p>
+        <p className="text-gray-400 text-lg">Hover a node to see proficiency details.</p>
       </div>
 
       <div className="relative w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-32">
