@@ -86,7 +86,7 @@ export default function CustomCursor() {
             height:  isHover ? 48 : isClick ? 16 : 32,
             opacity: isHover ? 0.6 : 0.35,
             borderColor: isHover ? "rgba(59,130,246,0.9)" : "rgba(255,255,255,0.5)",
-            backgroundColor: isHover ? "rgba(59,130,246,0.08)" : "transparent",
+            backgroundColor: isHover ? "rgba(59,130,246,0.08)" : "rgba(0,0,0,0)",
           }}
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
           className="rounded-full border"
