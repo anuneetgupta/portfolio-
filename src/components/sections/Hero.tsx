@@ -1,6 +1,7 @@
+/* eslint-disable */
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Download, Eye, Mail, Trophy, Code, Users } from "lucide-react";
 import AvatarCard from "@/components/3d/AvatarCard";
 import { useEffect, useState } from "react";

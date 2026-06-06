@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF, useAnimations, Text, Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -267,8 +267,6 @@ export default function PersonalizedScene() {
             anchorX="center"
             anchorY="middle"
             font="https://fonts.gstatic.com/s/outfit/v11/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC1C4G-EiAou6Y.woff2"
-            backgroundColor="#0f172a"
-            padding={0.06}
           >
             {text}
           </Text>
