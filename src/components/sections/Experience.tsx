@@ -51,7 +51,7 @@ const experiences = [
 export default function Experience() {
   return (
     <section className="relative w-full py-32 px-6 z-10 text-white border-t border-gray-900 bg-black/60">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -70,7 +70,9 @@ export default function Experience() {
           <p className="text-gray-400 text-lg">My academic journey and professional background</p>
         </motion.div>
 
-        <div className="relative border-l-2 border-gray-800 ml-4 lg:ml-0 lg:left-1/2 lg:-translate-x-[1px]">
+        <div className="relative ml-4 xl:ml-0">
+          <div className="absolute left-0 xl:left-1/2 top-0 bottom-0 w-0.5 bg-gray-800 xl:-translate-x-1/2" />
+
           {experiences.map((exp, index) => {
             const isEven = index % 2 === 0;
             const Icon = exp.type === "education" ? GraduationCap : Briefcase;
@@ -82,22 +84,22 @@ export default function Experience() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative mb-16 lg:mb-24 flex flex-col lg:flex-row items-start ${isEven ? "lg:flex-row-reverse" : ""}`}
+                className="relative mb-14 lg:mb-20 xl:mb-24 xl:grid xl:grid-cols-2 xl:gap-x-28"
               >
                 {/* Timeline Dot */}
-                <div className="absolute left-[-9px] lg:left-1/2 lg:-translate-x-1/2 top-6 w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] z-10" />
+                <div className="absolute left-[-7px] xl:left-1/2 xl:-translate-x-1/2 top-6 w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] z-10" />
 
                 {/* Content Panel */}
-                <div className={`w-full lg:w-1/2 pl-8 lg:pl-0 ${isEven ? "lg:pr-14" : "lg:pl-14"}`}>
-                  <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/40 border border-gray-700/50 p-6 lg:p-8 rounded-3xl backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]">
+                <div className={`w-full pl-8 xl:pl-0 ${isEven ? "xl:col-start-2" : "xl:col-start-1"}`}>
+                  <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/40 border border-gray-700/50 p-5 sm:p-6 lg:p-7 rounded-3xl backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]">
                     
                     {/* Header row */}
                     <div className="flex flex-col gap-3 mb-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors leading-tight">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
+                        <h3 className="min-w-0 break-words text-lg sm:text-xl font-bold text-white group-hover:text-blue-400 transition-colors leading-tight">
                           {exp.role}
                         </h3>
-                        <span className={`text-2xl font-black shrink-0 ${exp.highlightColor}`}>
+                        <span className={`text-xl sm:text-2xl font-black shrink-0 ${exp.highlightColor}`}>
                           {exp.highlight}
                         </span>
                       </div>
