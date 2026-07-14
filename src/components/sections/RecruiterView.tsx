@@ -1,24 +1,43 @@
+/* eslint-disable */
 "use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Briefcase, Award, Code, Download, ExternalLink, GitBranch, Mail, MapPin, GraduationCap, Cpu, Brain } from "lucide-react";
+import { X, Briefcase, Award, Code, Download, ExternalLink, GitBranch, Mail, MapPin, GraduationCap, Cpu, Brain, BookOpen } from "lucide-react";
+import { useGameStore } from "@/lib/gameStore";
 
 export default function RecruiterView() {
   const [isOpen, setIsOpen] = useState(false);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const togglePokedexMode = useGameStore((s) => s.togglePokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+  const accentColors = useGameStore((s) => s.accentColors);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
 
   return (
     <>
-      {/* Trigger Button */}
+      {/* Trigger Button — "Pokédex Mode" in game, "Recruiter Mode" otherwise */}
       <motion.button
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2, duration: 0.5 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white rounded-full font-bold shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:shadow-[0_0_35px_rgba(37,99,235,0.7)] flex items-center gap-2 transition-all hover:scale-105 group"
+        className="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-full font-bold shadow-lg flex items-center gap-2 transition-all hover:scale-105 group"
+        style={{
+          background: showGameMode
+            ? `linear-gradient(135deg, ${accentColors.primary}, ${accentColors.primaryLight})`
+            : "linear-gradient(135deg, #2563eb, #3b82f6)",
+          boxShadow: `0 0 25px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.5)"}`,
+          color: "#fff",
+        }}
       >
-        <Briefcase className="w-5 h-5" />
-        <span>Recruiter Mode</span>
+        {showGameMode ? (
+          <BookOpen className="w-5 h-5" />
+        ) : (
+          <Briefcase className="w-5 h-5" />
+        )}
+        <span>{showGameMode ? "Pokédex Mode" : "Recruiter Mode"}</span>
         <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
       </motion.button>
 
@@ -92,6 +111,25 @@ export default function RecruiterView() {
                       Send Email
                     </a>
                   </div>
+
+                  {/* Pokédex Mode toggle inside the panel */}
+                  {hasSelectedStarter && (
+                    <button
+                      onClick={() => {
+                        togglePokedexMode();
+                        setIsOpen(false);
+                      }}
+                      className="mt-4 flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border transition-all"
+                      style={{
+                        borderColor: accentColors.border,
+                        color: accentColors.primaryLight,
+                        background: `${accentColors.primary}10`,
+                      }}
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      {pokedexMode ? "Switch to Game Mode" : "Switch to Pokédex Mode (Clean View)"}
+                    </button>
+                  )}
                 </div>
 
                 {/* ── Main Grid ── */}

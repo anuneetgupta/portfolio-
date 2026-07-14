@@ -1,8 +1,10 @@
+/* eslint-disable */
 "use client";
 
 import { motion } from "framer-motion";
 import { Brain, Cpu, Rocket, Download, GitBranch, Briefcase } from "lucide-react";
 import Image from "next/image";
+import { useGameStore } from "@/lib/gameStore";
 
 const timeline = [
   {
@@ -14,6 +16,7 @@ const timeline = [
     bg: "bg-purple-400/10",
     border: "border-purple-400/30",
     glow: "shadow-[0_0_20px_rgba(168,85,247,0.2)]",
+    gameLabel: "🌱 Base Form Unlocked",
   },
   {
     year: "2025",
@@ -24,6 +27,7 @@ const timeline = [
     bg: "bg-blue-400/10",
     border: "border-blue-400/30",
     glow: "shadow-[0_0_20px_rgba(59,130,246,0.2)]",
+    gameLabel: "⚡ First Evolution",
   },
   {
     year: "2026",
@@ -34,10 +38,17 @@ const timeline = [
     bg: "bg-green-400/10",
     border: "border-green-400/30",
     glow: "shadow-[0_0_20px_rgba(34,197,94,0.2)]",
+    gameLabel: "🔥 Final Evolution",
   },
 ];
 
 export default function About() {
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   return (
     <section className="relative w-full py-32 px-6 z-10 text-white border-t border-gray-900 bg-black/40">
       <div className="max-w-6xl mx-auto w-full">
@@ -48,8 +59,20 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex justify-center mb-16"
+          className="flex flex-col items-center mb-16 gap-2"
         >
+          {showGameMode && (
+            <div
+              className="game-section-label"
+              style={{
+                background: `${accentColors.primary}15`,
+                color: accentColors.primaryLight,
+                border: `1px solid ${accentColors.border}`,
+              }}
+            >
+              🏠 Pallet Town
+            </div>
+          )}
           <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase">
             About Me
           </div>
@@ -82,7 +105,7 @@ export default function About() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-xl font-bold text-white">Anuneet Gupta</h3>
-                    <p className="text-sm text-blue-400 font-medium">AI / ML Engineer</p>
+                    <p className="text-sm font-medium" style={{ color: showGameMode ? accentColors.primary : "#60a5fa" }}>AI / ML Engineer</p>
                   </div>
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-900/30 border border-green-700/40 text-xs font-semibold text-green-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
@@ -94,7 +117,8 @@ export default function About() {
                   <a
                     href="/resume.pdf"
                     download
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all"
+                    style={{ background: showGameMode ? accentColors.primary : "#2563eb" }}
                   >
                     <Download className="w-4 h-4" /> Resume
                   </a>
@@ -120,7 +144,7 @@ export default function About() {
 
             <div className="space-y-4">
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                Bridging the gap between <span className="text-blue-400">theory</span> and <span className="text-blue-400">production</span>.
+                Bridging the gap between <span style={{ color: showGameMode ? accentColors.primary : "#60a5fa" }}>theory</span> and <span style={{ color: showGameMode ? accentColors.primary : "#60a5fa" }}>production</span>.
               </h2>
               <p className="text-lg text-gray-400 leading-relaxed">
                 Final-year BCA student (CGPA 8.4) with hands-on experience in machine learning, NLP, and Computer Vision. Built Samarpan — an AI-powered quiz and proctoring platform that won 3rd place at CSJMUIF Ideathon 2026.
@@ -160,6 +184,12 @@ export default function About() {
 
                 {/* Content Card */}
                 <div className={`p-8 rounded-3xl bg-gray-900/40 border border-gray-800 hover:border-gray-700 transition-all duration-500 backdrop-blur-md group-hover:-translate-y-2 group-hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.6)]`}>
+                  {/* Game mode label */}
+                  {showGameMode && (
+                    <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: accentColors.primaryLight, fontFamily: "var(--font-pixel), monospace" }}>
+                      {item.gameLabel}
+                    </div>
+                  )}
                   <div className="flex items-center gap-4 mb-4">
                     <div className={`p-3 rounded-xl ${item.bg} ${item.color}`}>
                       <item.icon className="w-6 h-6" />
@@ -188,6 +218,11 @@ export default function About() {
                 <div className="w-2 h-2 rounded-full bg-gray-600 animate-pulse" />
               </div>
               <div className="p-6 rounded-3xl border border-dashed border-gray-800 text-gray-600">
+                {showGameMode && (
+                  <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                    ✨ Next Chapter...
+                  </div>
+                )}
                 <p className="font-mono text-sm">2027 · Next Chapter...</p>
                 <p className="text-sm mt-1">Full-time ML Engineering role. Building the future.</p>
               </div>

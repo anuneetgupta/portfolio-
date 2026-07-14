@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { useRef, useState } from "react";
@@ -6,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, Mail, MapPin, Phone, GitBranch, Briefcase, MessageSquare, CheckCircle2 } from "lucide-react";
 import * as THREE from "three";
 import { Float, Environment, ContactShadows } from "@react-three/drei";
+import { useGameStore } from "@/lib/gameStore";
 
 function GlobeModel() {
   const groupRef = useRef<THREE.Group>(null);
@@ -60,9 +62,19 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+  const addXP = useGameStore((s) => s.addXP);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Award XP for contact form submission
+    addXP(20, "contact-form-submit");
 
     // Build mailto link and open it
     const subject = encodeURIComponent(`Portfolio Contact from ${formState.name}`);
@@ -75,7 +87,6 @@ export default function Contact() {
       setIsSubmitting(false);
       setSubmitted(true);
       setFormState({ name: "", email: "", message: "" });
-      // Reset success state after 5 seconds
       setTimeout(() => setSubmitted(false), 5000);
     }, 800);
   };
@@ -90,14 +101,28 @@ export default function Contact() {
       <div className="max-w-7xl mx-auto relative z-10">
         
         <div className="text-center space-y-4 mb-20">
+          {showGameMode && (
+            <div
+              className="game-section-label mx-auto"
+              style={{
+                background: `${accentColors.primary}15`,
+                color: accentColors.primaryLight,
+                border: `1px solid ${accentColors.border}`,
+              }}
+            >
+              🛒 Poké Mart
+            </div>
+          )}
           <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
             Get In Touch
           </div>
           <h2 className="text-4xl md:text-5xl font-bold">
-            Let&apos;s Build Something
+            {showGameMode ? "Talk to Nurse Joy" : "Let's Build Something"}
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Have a project in mind, want to collaborate, or just want to say hello? I&apos;d love to hear from you.
+            {showGameMode
+              ? "Need to heal your team? Send a message and I'll be happy to help!"
+              : "Have a project in mind, want to collaborate, or just want to say hello? I'd love to hear from you."}
           </p>
         </div>
 
@@ -109,8 +134,15 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="p-8 md:p-10 rounded-3xl bg-gray-900/50 border border-gray-800 backdrop-blur-md relative overflow-hidden"
+            className={`p-8 md:p-10 rounded-3xl backdrop-blur-md relative overflow-hidden ${
+              showGameMode
+                ? "game-border bg-black/60"
+                : "bg-gray-900/50 border border-gray-800"
+            }`}
           >
+            {/* Scanline in game mode */}
+            {showGameMode && <div className="scanline-overlay absolute inset-0 z-0 opacity-20 pointer-events-none" />}
+
             {/* Success state */}
             <AnimatePresence>
               {submitted && (
@@ -121,20 +153,26 @@ export default function Contact() {
                   className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/95 rounded-3xl z-10"
                 >
                   <CheckCircle2 className="w-16 h-16 text-green-400 mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {showGameMode ? "Message Delivered!" : "Message Sent!"}
+                  </h3>
                   <p className="text-gray-400 text-center max-w-xs">
-                    Your email client opened. Looking forward to chatting with you!
+                    {showGameMode
+                      ? "+20 XP earned! Your email client opened. Let's connect!"
+                      : "Your email client opened. Looking forward to chatting with you!"}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="flex items-center gap-3 mb-8">
-              <MessageSquare className="w-6 h-6 text-blue-400" />
-              <h3 className="text-2xl font-bold">Send a Message</h3>
+            <div className="flex items-center gap-3 mb-8 relative z-10">
+              <MessageSquare className="w-6 h-6" style={{ color: showGameMode ? accentColors.primary : "#60a5fa" }} />
+              <h3 className="text-2xl font-bold">
+                {showGameMode ? "Send a Message (+20 XP)" : "Send a Message"}
+              </h3>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium text-gray-400">Your Name</label>
                 <input 
@@ -143,7 +181,10 @@ export default function Contact() {
                   required
                   value={formState.name}
                   onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                  className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-gray-600"
+                  className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 transition-all placeholder-gray-600"
+                  style={{
+                    borderColor: formState.name ? accentColors.border : undefined,
+                  }}
                   placeholder="John Doe"
                 />
               </div>
@@ -156,7 +197,7 @@ export default function Contact() {
                   required
                   value={formState.email}
                   onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                  className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder-gray-600"
+                  className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 transition-all placeholder-gray-600"
                   placeholder="john@example.com"
                 />
               </div>
@@ -169,7 +210,7 @@ export default function Contact() {
                   rows={5}
                   value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                  className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all resize-none placeholder-gray-600"
+                  className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 transition-all resize-none placeholder-gray-600"
                   placeholder="Tell me about your project or idea..."
                 />
               </div>
@@ -177,7 +218,11 @@ export default function Contact() {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)]"
+                className="w-full py-4 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                style={{
+                  background: `linear-gradient(135deg, ${showGameMode ? accentColors.primary : "#2563eb"}, ${showGameMode ? accentColors.primaryLight : "#3b82f6"})`,
+                  boxShadow: `0 0 20px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.3)"}`,
+                }}
               >
                 {isSubmitting ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

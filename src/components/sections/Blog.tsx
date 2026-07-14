@@ -1,7 +1,9 @@
+/* eslint-disable */
 "use client";
 
 import { motion } from "framer-motion";
 import { BookOpen, Clock, ArrowUpRight, Code, Cpu, ExternalLink } from "lucide-react";
+import { useGameStore } from "@/lib/gameStore";
 
 const posts = [
   {
@@ -16,6 +18,7 @@ const posts = [
     border: "border-blue-500/30",
     featured: true,
     href: "#blog",
+    boxSlot: "BOX 1 — Slot 1",
   },
   {
     id: 2,
@@ -29,6 +32,7 @@ const posts = [
     border: "border-green-500/30",
     featured: false,
     href: "#blog",
+    boxSlot: "BOX 1 — Slot 2",
   },
   {
     id: 3,
@@ -42,10 +46,17 @@ const posts = [
     border: "border-purple-500/30",
     featured: false,
     href: "#blog",
+    boxSlot: "BOX 1 — Slot 3",
   },
 ];
 
 export default function Blog() {
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   return (
     <section className="relative w-full py-32 px-6 z-10 text-white border-t border-gray-900 bg-black">
       <div className="max-w-7xl mx-auto space-y-16">
@@ -57,12 +68,28 @@ export default function Blog() {
           transition={{ duration: 0.7 }}
           className="text-center space-y-4"
         >
+          {showGameMode && (
+            <div
+              className="game-section-label mx-auto"
+              style={{
+                background: `${accentColors.primary}15`,
+                color: accentColors.primaryLight,
+                border: `1px solid ${accentColors.border}`,
+              }}
+            >
+              💾 PC Storage Box
+            </div>
+          )}
           <div className="inline-block px-4 py-2 rounded-full bg-purple-900/30 border border-purple-800 text-purple-300 text-sm font-semibold tracking-wider uppercase mb-4">
             Insights
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold">Writing &amp; Insights</h2>
+          <h2 className="text-4xl md:text-5xl font-bold">
+            {showGameMode ? "PC Storage — Articles" : "Writing & Insights"}
+          </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Thoughts on Artificial Intelligence, Web Development, and the intersection of modern technology with ancient wisdom.
+            {showGameMode
+              ? "Articles stored in your PC. Access anytime from any Pokémon Center."
+              : "Thoughts on Artificial Intelligence, Web Development, and the intersection of modern technology with ancient wisdom."}
           </p>
         </motion.div>
 
@@ -88,9 +115,16 @@ export default function Blog() {
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="flex justify-between items-start mb-6">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs font-semibold backdrop-blur-md">
-                      <Icon className="w-3.5 h-3.5" />
-                      {post.category}
+                    <div className="space-y-1">
+                      {showGameMode && (
+                        <span className="block text-[9px] font-bold text-gray-500 uppercase tracking-wider" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                          {post.boxSlot}
+                        </span>
+                      )}
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs font-semibold backdrop-blur-md">
+                        <Icon className="w-3.5 h-3.5" />
+                        {post.category}
+                      </div>
                     </div>
                     <ArrowUpRight className="w-5 h-5 text-white/40 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
                   </div>

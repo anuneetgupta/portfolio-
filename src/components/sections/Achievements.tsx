@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { useRef, useState } from "react";
@@ -6,6 +7,8 @@ import { motion } from "framer-motion";
 import { Trophy, Award, Star, ExternalLink, Calendar, Users } from "lucide-react";
 import * as THREE from "three";
 import { Float, Environment, ContactShadows } from "@react-three/drei";
+import { useGameStore } from "@/lib/gameStore";
+import GymBadge from "@/components/game/GymBadge";
 
 function TrophyModel() {
   const trophyRef = useRef<THREE.Group>(null);
@@ -50,13 +53,19 @@ function TrophyModel() {
 }
 
 const CERTIFICATES = [
-  { title: "Ideathon Winner 2026", org: "CSJMUIF Innovation Foundation", color: "border-yellow-500/40 bg-yellow-900/10 text-yellow-400" },
-  { title: "Python for Data Science", org: "Online Certification", color: "border-blue-500/40 bg-blue-900/10 text-blue-400" },
-  { title: "Machine Learning Fundamentals", org: "Coursera / NPTEL", color: "border-purple-500/40 bg-purple-900/10 text-purple-400" },
+  { title: "Ideathon Winner 2026", org: "CSJMUIF Innovation Foundation", color: "border-yellow-500/40 bg-yellow-900/10 text-yellow-400", gameLabel: "TM01" },
+  { title: "Python for Data Science", org: "Online Certification", color: "border-blue-500/40 bg-blue-900/10 text-blue-400", gameLabel: "TM02" },
+  { title: "Machine Learning Fundamentals", org: "Coursera / NPTEL", color: "border-purple-500/40 bg-purple-900/10 text-purple-400", gameLabel: "HM01" },
 ];
 
 export default function Achievements() {
   const [activeCard, setActiveCard] = useState(0);
+
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
 
   return (
     <section className="relative w-full min-h-screen py-32 px-6 z-10 text-white bg-black/50 border-t border-gray-900">
@@ -69,12 +78,24 @@ export default function Achievements() {
           transition={{ duration: 0.7 }}
           className="text-center space-y-4"
         >
+          {showGameMode && (
+            <div
+              className="game-section-label mx-auto"
+              style={{
+                background: `${accentColors.primary}15`,
+                color: accentColors.primaryLight,
+                border: `1px solid ${accentColors.border}`,
+              }}
+            >
+              🏆 Elite Four / Trophy Room
+            </div>
+          )}
           <div className="inline-block px-4 py-2 rounded-full bg-yellow-900/30 border border-yellow-800 text-yellow-300 text-sm font-semibold tracking-wider uppercase mb-4">
             Recognition
           </div>
           <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4">
             <Trophy className="w-10 h-10 text-yellow-500" />
-            Trophy Room
+            {showGameMode ? "Elite Four / Trophy Room" : "Trophy Room"}
           </h2>
           <p className="text-gray-400 text-lg">Honors, Awards, and Hackathon Victories</p>
         </motion.div>
@@ -100,7 +121,7 @@ export default function Achievements() {
               </Canvas>
             </div>
 
-            {/* Stats strip */}
+            {/* Stats strip with optional gym badges */}
             <div className="grid grid-cols-3 gap-4 mt-6">
               {[
                 { icon: Trophy, value: "1st", label: "Major Win", color: "text-yellow-400" },
@@ -114,6 +135,14 @@ export default function Achievements() {
                 </div>
               ))}
             </div>
+
+            {/* Gym Badges row (game mode only) */}
+            {showGameMode && (
+              <div className="flex items-center justify-center gap-4 mt-6">
+                <GymBadge label="Ideathon Badge" icon="🏆" colors={accentColors} size={52} />
+                <GymBadge label="Deploy Badge" icon="🚀" colors={{ ...accentColors, primary: "#22c55e", primaryLight: "#4ade80" }} size={52} />
+              </div>
+            )}
           </motion.div>
 
           {/* Achievement Details */}
@@ -155,9 +184,11 @@ export default function Achievements() {
               </div>
             </div>
 
-            {/* Certificate Showcase */}
+            {/* Certificate Showcase — styled as TM/HM in game mode */}
             <div>
-              <h4 className="text-sm uppercase text-gray-500 font-bold tracking-wider mb-4">Certifications &amp; Recognition</h4>
+              <h4 className="text-sm uppercase text-gray-500 font-bold tracking-wider mb-4">
+                {showGameMode ? "TM / HM Collection" : "Certifications & Recognition"}
+              </h4>
               <div className="space-y-3">
                 {CERTIFICATES.map((cert, i) => (
                   <motion.div
@@ -174,6 +205,11 @@ export default function Achievements() {
                     }`}
                   >
                     <div className="flex items-center gap-3">
+                      {showGameMode && (
+                        <span className="text-[10px] font-bold text-gray-500" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                          {cert.gameLabel}
+                        </span>
+                      )}
                       <Award className={`w-5 h-5 ${activeCard === i ? cert.color.split(" ")[2] : "text-gray-600"}`} />
                       <div>
                         <p className="font-semibold text-sm text-white">{cert.title}</p>

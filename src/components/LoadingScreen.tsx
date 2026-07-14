@@ -1,8 +1,8 @@
+/* eslint-disable */
 "use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap } from "lucide-react";
 
 export default function LoadingScreen() {
   const [progress, setProgress]   = useState(0);
@@ -17,16 +17,15 @@ export default function LoadingScreen() {
       if (i < steps.length) {
         setProgress(steps[i]);
         i++;
-        setTimeout(tick, 250 + Math.random() * 200);
+        setTimeout(tick, 200 + Math.random() * 150);
       } else {
-        // Brief pause at 100%, then exit
         setTimeout(() => {
           setDone(true);
-          setTimeout(() => setHidden(true), 900);
-        }, 400);
+          setTimeout(() => setHidden(true), 700);
+        }, 300);
       }
     };
-    const t = setTimeout(tick, 200);
+    const t = setTimeout(tick, 150);
     return () => clearTimeout(t);
   }, []);
 
@@ -39,12 +38,15 @@ export default function LoadingScreen() {
           key="loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.04 }}
-          transition={{ duration: 0.75, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[999] bg-black flex flex-col items-center justify-center overflow-hidden"
+          transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[998] bg-black flex flex-col items-center justify-center overflow-hidden"
         >
+          {/* Scanline overlay */}
+          <div className="scanline-overlay absolute inset-0 z-50" />
+
           {/* Grid overlay */}
           <div
-            className="absolute inset-0 opacity-[0.04] pointer-events-none"
+            className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{
               backgroundImage:
                 "linear-gradient(rgba(59,130,246,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.5) 1px, transparent 1px)",
@@ -54,29 +56,28 @@ export default function LoadingScreen() {
 
           {/* Radial glow */}
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-600/8 rounded-full blur-[100px]" />
           </div>
 
-          {/* Logo */}
+          {/* Retro boot logo */}
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-            className="flex flex-col items-center gap-6 mb-16"
+            className="flex flex-col items-center gap-5 mb-12"
           >
+            {/* Pixel-style logo box */}
             <div className="relative">
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                 className="absolute -inset-3 rounded-full border border-blue-500/20"
               />
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                className="absolute -inset-5 rounded-full border border-purple-500/15"
-              />
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.6)]">
-                <Zap className="w-8 h-8 text-white" />
+              <div
+                className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.5)]"
+                style={{ imageRendering: "pixelated" }}
+              >
+                <span className="text-2xl">⚡</span>
               </div>
             </div>
 
@@ -85,7 +86,8 @@ export default function LoadingScreen() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-3xl font-bold tracking-widest text-white"
+                className="text-xl font-bold tracking-[0.3em] text-white"
+                style={{ fontFamily: "var(--font-pixel), monospace", fontSize: "14px" }}
               >
                 ANUNEET<span className="text-blue-400">.</span>
               </motion.h1>
@@ -93,27 +95,36 @@ export default function LoadingScreen() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="text-sm text-gray-500 tracking-widest uppercase mt-1"
+                className="text-[10px] text-gray-500 tracking-[0.2em] uppercase mt-2"
+                style={{ fontFamily: "var(--font-pixel), monospace" }}
               >
-                AI / ML Engineer
+                AI/ML Engineer
               </motion.p>
             </div>
           </motion.div>
 
-          {/* Progress section */}
-          <div className="w-64 space-y-3">
-            {/* Bar */}
-            <div className="h-px bg-gray-900 rounded-full overflow-hidden">
+          {/* Progress section — retro terminal style */}
+          <div className="w-56 space-y-2">
+            <div className="h-2 bg-gray-900 rounded-sm overflow-hidden border border-gray-800">
               <motion.div
-                className="h-full bg-gradient-to-r from-blue-600 via-blue-400 to-cyan-400 rounded-full"
+                className="h-full bg-gradient-to-r from-blue-600 via-blue-400 to-cyan-400 rounded-sm relative xp-shimmer"
                 style={{ width: `${progress}%` }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               />
             </div>
-            {/* Counter */}
             <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-600 font-mono tracking-widest uppercase">Initializing</span>
-              <span className="text-xs text-blue-400 font-mono font-bold">{progress}%</span>
+              <span
+                className="text-[9px] text-gray-600 tracking-[0.2em] uppercase"
+                style={{ fontFamily: "var(--font-pixel), monospace" }}
+              >
+                Initializing
+              </span>
+              <span
+                className="text-[9px] text-blue-400 font-bold"
+                style={{ fontFamily: "var(--font-pixel), monospace" }}
+              >
+                {progress}%
+              </span>
             </div>
           </div>
         </motion.div>

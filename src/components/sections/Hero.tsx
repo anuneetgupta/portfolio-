@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Download, Eye, Mail, Trophy, Code, Users } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import { useEffect, useState } from "react";
+import { useGameStore } from "@/lib/gameStore";
 
 const ROLES = [
   "AI / ML Engineer",
@@ -46,15 +47,28 @@ function TypewriterRole() {
     return () => clearTimeout(timeout);
   }, [display, phase, index]);
 
+  const accentColors = useGameStore((s) => s.accentColors);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+
   return (
     <span className="inline-block min-w-[2ch]">
-      <span className="text-blue-400">{display}</span>
-      <span className="inline-block w-0.5 h-6 md:h-8 bg-blue-400 ml-0.5 align-middle animate-pulse" />
+      <span style={{ color: hasSelectedStarter ? accentColors.primary : "#60a5fa" }}>{display}</span>
+      <span
+        className="inline-block w-0.5 h-6 md:h-8 ml-0.5 align-middle animate-pulse"
+        style={{ background: hasSelectedStarter ? accentColors.primary : "#60a5fa" }}
+      />
     </span>
   );
 }
 
 export default function Hero() {
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+  const addXP = useGameStore((s) => s.addXP);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   return (
     <section className="relative w-full min-h-screen flex flex-col items-center justify-center pt-24 overflow-hidden text-white">
       <div className="container mx-auto px-6 relative z-10">
@@ -67,6 +81,23 @@ export default function Hero() {
             transition={{ duration: 0.8 }}
             className="text-center lg:text-left space-y-6 order-2 lg:order-1"
           >
+            {/* Game mode location label */}
+            {showGameMode && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="game-section-label"
+                style={{
+                  background: `${accentColors.primary}15`,
+                  color: accentColors.primaryLight,
+                  border: `1px solid ${accentColors.border}`,
+                }}
+              >
+                🏠 Pallet Town — Home
+              </motion.div>
+            )}
+
             {/* Availability badge */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -84,7 +115,8 @@ export default function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
-                className="text-blue-400 font-semibold tracking-widest uppercase text-sm md:text-base"
+                className="font-semibold tracking-widest uppercase text-sm md:text-base"
+                style={{ color: showGameMode ? accentColors.primaryLight : "#60a5fa" }}
               >
                 Building AI Products That Solve Real Problems
               </motion.h2>
@@ -92,7 +124,12 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.7 }}
-                className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-400"
+                className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent"
+                style={{
+                  backgroundImage: showGameMode
+                    ? `linear-gradient(to right, #fff, ${accentColors.primaryLight}, ${accentColors.primary})`
+                    : "linear-gradient(to right, #fff, #bfdbfe, #60a5fa)",
+                }}
               >
                 ANUNEET GUPTA
               </motion.h1>
@@ -117,7 +154,11 @@ export default function Hero() {
             >
               <button
                 onClick={() => scrollTo("projects")}
-                className="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-all font-medium flex items-center gap-2 group shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]"
+                className="px-8 py-3 rounded-full transition-all font-medium flex items-center gap-2 group"
+                style={{
+                  background: showGameMode ? accentColors.primary : "#2563eb",
+                  boxShadow: `0 0 20px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.4)"}`,
+                }}
               >
                 <Eye className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 View Projects
@@ -125,6 +166,7 @@ export default function Hero() {
               <a
                 href="/resume.pdf"
                 download
+                onClick={() => addXP(25, "download-resume")}
                 className="px-8 py-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all font-medium flex items-center gap-2 group border border-white/10"
               >
                 <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
@@ -170,9 +212,15 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}
-              className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-blue-500/30 transition-all cursor-default group"
+              className="flex flex-col items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all cursor-default group"
+              style={showGameMode ? {
+                borderColor: `${accentColors.primary}20`,
+              } : {}}
             >
-              <stat.icon className="w-6 h-6 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
+              <stat.icon
+                className="w-6 h-6 mb-2 group-hover:scale-110 transition-transform"
+                style={{ color: showGameMode ? accentColors.primary : "#60a5fa" }}
+              />
               <span className="text-3xl font-bold text-white mb-1">{stat.value}</span>
               <span className="text-sm text-gray-400 font-medium text-center">{stat.label}</span>
             </motion.div>

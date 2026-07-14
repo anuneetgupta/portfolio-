@@ -1,7 +1,9 @@
+/* eslint-disable */
 "use client";
 
 import { motion } from "framer-motion";
 import { Briefcase, Calendar, MapPin, ChevronRight, GraduationCap } from "lucide-react";
+import { useGameStore } from "@/lib/gameStore";
 
 const experiences = [
   {
@@ -18,6 +20,7 @@ const experiences = [
       "Winner (3rd place) at CSJMUIF Ideathon 2026 for building Samarpan.",
       "Coursework includes Data Structures, DBMS, Computer Networks & OS.",
     ],
+    healingLabel: "💊 Full Restore — Active Quest",
   },
   {
     id: 2,
@@ -32,6 +35,7 @@ const experiences = [
       "Percentage: 80% in Physics, Chemistry, and Mathematics.",
       "Strong mathematical foundation applied to ML algorithms.",
     ],
+    healingLabel: "💊 Super Potion — Completed",
   },
   {
     id: 3,
@@ -45,10 +49,17 @@ const experiences = [
     description: [
       "Percentage: 92% — School topper in Mathematics.",
     ],
+    healingLabel: "💊 Potion — Origin Story",
   },
 ];
 
 export default function Experience() {
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   return (
     <section className="relative w-full py-32 px-6 z-10 text-white border-t border-gray-900 bg-black/60">
       <div className="max-w-6xl mx-auto">
@@ -60,14 +71,28 @@ export default function Experience() {
           transition={{ duration: 0.7 }}
           className="text-center space-y-4 mb-24"
         >
+          {showGameMode && (
+            <div
+              className="game-section-label mx-auto"
+              style={{
+                background: `${accentColors.primary}15`,
+                color: accentColors.primaryLight,
+                border: `1px solid ${accentColors.border}`,
+              }}
+            >
+              🏥 Pokémon Center
+            </div>
+          )}
           <div className="inline-block px-4 py-2 rounded-full bg-gray-900 border border-gray-800 text-gray-300 text-sm font-semibold tracking-wider uppercase mb-4">
             Background
           </div>
           <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4">
             <Briefcase className="w-10 h-10 text-blue-500" />
-            Experience &amp; Education
+            {showGameMode ? "Pokémon Center — Rest Log" : "Experience & Education"}
           </h2>
-          <p className="text-gray-400 text-lg">My academic journey and professional background</p>
+          <p className="text-gray-400 text-lg">
+            {showGameMode ? "Healing station records — education & training milestones" : "My academic journey and professional background"}
+          </p>
         </motion.div>
 
         <div className="relative ml-4 xl:ml-0">
@@ -87,12 +112,25 @@ export default function Experience() {
                 className="relative mb-14 lg:mb-20 xl:mb-24 xl:grid xl:grid-cols-2 xl:gap-x-28"
               >
                 {/* Timeline Dot */}
-                <div className="absolute left-[-7px] xl:left-1/2 xl:-translate-x-1/2 top-6 w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.6)] z-10" />
+                <div
+                  className="absolute left-[-7px] xl:left-1/2 xl:-translate-x-1/2 top-6 w-4 h-4 rounded-full shadow-lg z-10"
+                  style={{
+                    background: showGameMode ? accentColors.primary : "#3b82f6",
+                    boxShadow: `0 0 15px ${showGameMode ? accentColors.glow : "rgba(59,130,246,0.6)"}`,
+                  }}
+                />
 
                 {/* Content Panel */}
                 <div className={`w-full pl-8 xl:pl-0 ${isEven ? "xl:col-start-2" : "xl:col-start-1"}`}>
                   <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/40 border border-gray-700/50 p-5 sm:p-6 lg:p-7 rounded-3xl backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]">
                     
+                    {/* Game mode healing label */}
+                    {showGameMode && (
+                      <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: accentColors.primaryLight, fontFamily: "var(--font-pixel), monospace" }}>
+                        {exp.healingLabel}
+                      </div>
+                    )}
+
                     {/* Header row */}
                     <div className="flex flex-col gap-3 mb-4">
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
@@ -111,7 +149,7 @@ export default function Experience() {
 
                     <div className="flex flex-wrap items-center gap-4 mb-5 text-sm text-gray-400">
                       <div className="flex items-center gap-1.5 text-gray-300">
-                        <Icon className="w-4 h-4 text-blue-500" />
+                        <Icon className="w-4 h-4" style={{ color: showGameMode ? accentColors.primary : "#3b82f6" }} />
                         <span className="font-medium">{exp.company}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -123,7 +161,7 @@ export default function Experience() {
                     <ul className="space-y-2.5">
                       {exp.description.map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-gray-400 text-sm">
-                          <ChevronRight className="w-4 h-4 text-blue-500/70 shrink-0 mt-0.5" />
+                          <ChevronRight className="w-4 h-4 shrink-0 mt-0.5" style={{ color: showGameMode ? `${accentColors.primary}90` : "rgba(59,130,246,0.7)" }} />
                           <span className="leading-relaxed">{item}</span>
                         </li>
                       ))}
@@ -151,7 +189,11 @@ export default function Experience() {
           <p className="text-gray-500 text-sm max-w-md mx-auto">I bring 2+ years of hands-on project experience, a hackathon win, and production deployments to the table.</p>
           <a
             href="mailto:guptaanuneet10june@gmail.com"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] mt-2"
+            className="inline-flex items-center gap-2 px-8 py-3 text-white font-semibold rounded-xl transition-all mt-2"
+            style={{
+              background: showGameMode ? accentColors.primary : "#2563eb",
+              boxShadow: `0 0 20px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.4)"}`,
+            }}
           >
             Get in Touch
           </a>

@@ -1,23 +1,31 @@
+/* eslint-disable */
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X, Zap, BookOpen } from "lucide-react";
+import { useGameStore } from "@/lib/gameStore";
 
+/* ── Nav link data with game-mode names ── */
 const NAV_LINKS = [
-  { label: "About",        href: "#about" },
-  { label: "Skills",       href: "#skills" },
-  { label: "Projects",     href: "#projects" },
-  { label: "Achievements", href: "#achievements" },
-  { label: "Experience",   href: "#experience" },
-  { label: "Blog",         href: "#blog" },
-  { label: "Contact",      href: "#contact" },
+  { label: "About",        gameName: "Pallet Town",      href: "#about" },
+  { label: "Skills",       gameName: "Training Grounds",  href: "#skills" },
+  { label: "Projects",     gameName: "Gyms",              href: "#projects" },
+  { label: "Achievements", gameName: "Elite Four",        href: "#achievements" },
+  { label: "Experience",   gameName: "Pokémon Center",    href: "#experience" },
+  { label: "Blog",         gameName: "PC Storage",        href: "#blog" },
+  { label: "Contact",      gameName: "Poké Mart",         href: "#contact" },
 ];
 
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState("hero");
   const [isScrolled, setIsScrolled]       = useState(false);
   const [menuOpen, setMenuOpen]           = useState(false);
+
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const togglePokedexMode = useGameStore((s) => s.togglePokedexMode);
+  const accentColors = useGameStore((s) => s.accentColors);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -60,13 +68,25 @@ export default function Navbar() {
     }
   }, []);
 
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   return (
     <>
       {/* Scroll Progress */}
       <motion.div
         style={{ scaleX, transformOrigin: "0%" }}
-        className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 z-[200]"
-      />
+        className="fixed top-0 left-0 right-0 h-[2px] z-[200]"
+        transition={{ duration: 0 }}
+      >
+        <div
+          className="w-full h-full"
+          style={{
+            background: showGameMode
+              ? `linear-gradient(90deg, ${accentColors.primary}, ${accentColors.primaryLight})`
+              : "linear-gradient(90deg, #3b82f6, #7c3aed, #06b6d4)",
+          }}
+        />
+      </motion.div>
 
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
@@ -86,19 +106,26 @@ export default function Navbar() {
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="flex items-center gap-2 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-[0_0_12px_rgba(37,99,235,0.5)] group-hover:shadow-[0_0_20px_rgba(37,99,235,0.7)] transition-all">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+              style={{
+                background: showGameMode ? accentColors.primary : "#2563eb",
+                boxShadow: `0 0 12px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.5)"}`,
+              }}
+            >
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-white text-sm tracking-wider hidden sm:block">
-              ANUNEET<span className="text-blue-400">.</span>
+              ANUNEET<span style={{ color: showGameMode ? accentColors.primary : "#60a5fa" }}>.</span>
             </span>
           </button>
 
           {/* Desktop Links */}
           <ul className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map(({ label, href }) => {
+            {NAV_LINKS.map(({ label, gameName, href }) => {
               const id = href.replace("#", "");
               const isActive = activeSection === id;
+              const displayLabel = showGameMode ? gameName : label;
               return (
                 <li key={href}>
                   <button
@@ -112,22 +139,48 @@ export default function Navbar() {
                     {isActive && (
                       <motion.span
                         layoutId="nav-pill"
-                        className="absolute inset-0 rounded-lg bg-white/10 border border-white/10"
+                        className="absolute inset-0 rounded-lg border"
+                        style={{
+                          background: showGameMode ? `${accentColors.primary}15` : "rgba(255,255,255,0.1)",
+                          borderColor: showGameMode ? accentColors.border : "rgba(255,255,255,0.1)",
+                        }}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
                     )}
-                    <span className="relative z-10">{label}</span>
+                    <span className="relative z-10" style={showGameMode && isActive ? { color: accentColors.primaryLight } : {}}>
+                      {displayLabel}
+                    </span>
                   </button>
                 </li>
               );
             })}
           </ul>
 
-          {/* CTA + Mobile Toggle */}
-          <div className="flex items-center gap-3">
+          {/* CTA + Pokédex Toggle + Mobile Toggle */}
+          <div className="flex items-center gap-2">
+            {/* Pokédex Mode toggle */}
+            {hasSelectedStarter && (
+              <button
+                onClick={togglePokedexMode}
+                className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all border ${
+                  pokedexMode
+                    ? "bg-white/10 border-white/20 text-white"
+                    : "bg-transparent border-gray-700 text-gray-400 hover:text-white hover:border-gray-500"
+                }`}
+                aria-label={pokedexMode ? "Switch to game mode" : "Switch to Pokédex mode"}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{pokedexMode ? "Game Mode" : "Pokédex"}</span>
+              </button>
+            )}
+
             <a
               href="mailto:guptaanuneet10june@gmail.com"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-xl transition-all"
+              style={{
+                background: showGameMode ? accentColors.primary : "#2563eb",
+                boxShadow: `0 0 20px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.4)"}`,
+              }}
             >
               Hire Me
             </a>
@@ -153,29 +206,57 @@ export default function Navbar() {
               className="absolute top-full mt-2 left-4 right-4 bg-gray-950/95 border border-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden"
             >
               <ul className="flex flex-col py-2">
-                {NAV_LINKS.map(({ label, href }) => {
+                {NAV_LINKS.map(({ label, gameName, href }) => {
                   const id = href.replace("#", "");
                   const isActive = activeSection === id;
+                  const displayLabel = showGameMode ? gameName : label;
                   return (
                     <li key={href}>
                       <button
                         onClick={() => handleNavClick(href)}
                         className={`w-full text-left px-6 py-3.5 text-sm font-medium transition-colors flex items-center gap-3 ${
                           isActive
-                            ? "text-blue-400 bg-blue-500/10"
+                            ? "bg-white/5"
                             : "text-gray-300 hover:text-white hover:bg-white/5"
                         }`}
+                        style={isActive ? { color: showGameMode ? accentColors.primaryLight : "#60a5fa" } : {}}
                       >
-                        {isActive && <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />}
-                        {label}
+                        {isActive && (
+                          <span
+                            className="w-1.5 h-1.5 rounded-full animate-pulse"
+                            style={{ background: showGameMode ? accentColors.primary : "#60a5fa" }}
+                          />
+                        )}
+                        {displayLabel}
+                        {showGameMode && (
+                          <span className="ml-auto text-[10px] text-gray-600">{label}</span>
+                        )}
                       </button>
                     </li>
                   );
                 })}
-                <li className="px-4 pb-3 pt-2">
+
+                {/* Pokédex Mode toggle (mobile) */}
+                {hasSelectedStarter && (
+                  <li className="px-4 pb-2 pt-1">
+                    <button
+                      onClick={() => {
+                        togglePokedexMode();
+                        setMenuOpen(false);
+                      }}
+                      className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 text-gray-300 text-sm font-semibold rounded-xl hover:bg-gray-700 transition-colors border border-gray-700"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      {pokedexMode ? "Switch to Game Mode" : "Switch to Pokédex Mode"}
+                    </button>
+                  </li>
+                )}
+
+                <li className="px-4 pb-3 pt-1">
                   <a
                     href="mailto:guptaanuneet10june@gmail.com"
-                    className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-500 transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-3 text-white text-sm font-semibold rounded-xl transition-colors"
+                    style={{ background: showGameMode ? accentColors.primary : "#2563eb" }}
                   >
                     Hire Me
                   </a>

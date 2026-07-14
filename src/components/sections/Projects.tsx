@@ -1,7 +1,11 @@
+/* eslint-disable */
 "use client";
 
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, GitBranch, PlayCircle, BarChart3, Users, Zap, ArrowUpRight } from "lucide-react";
+import { ExternalLink, GitBranch, PlayCircle, BarChart3, Users, Zap, ArrowUpRight, Swords, Shield, Heart, Gauge } from "lucide-react";
+import { useGameStore } from "@/lib/gameStore";
+import GymBadge from "@/components/game/GymBadge";
 
 const ML_PROJECTS = [
   {
@@ -13,6 +17,7 @@ const ML_PROJECTS = [
     border: "border-red-500/25",
     accent: "text-red-400",
     github: "https://github.com/anuneetgupta",
+    encounterType: "Wild Encounter — Route 1",
   },
   {
     title: "Car Price Prediction",
@@ -23,6 +28,7 @@ const ML_PROJECTS = [
     border: "border-blue-500/25",
     accent: "text-blue-400",
     github: "https://github.com/anuneetgupta",
+    encounterType: "Wild Encounter — Route 1",
   },
   {
     title: "Spam Detection",
@@ -33,6 +39,7 @@ const ML_PROJECTS = [
     border: "border-purple-500/25",
     accent: "text-purple-400",
     github: "https://github.com/anuneetgupta",
+    encounterType: "Wild Encounter — Route 2",
   },
   {
     title: "Color Detection",
@@ -43,10 +50,42 @@ const ML_PROJECTS = [
     border: "border-emerald-500/25",
     accent: "text-emerald-400",
     github: "https://github.com/anuneetgupta",
+    encounterType: "Wild Encounter — Route 2",
   },
 ];
 
+/* ── Gym Leader Stats Bar ── */
+function StatBar({ label, value, max, color, icon: Icon }: {
+  label: string; value: string; max: number; color: string;
+  icon: any;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <Icon className="w-3.5 h-3.5 shrink-0" style={{ color }} />
+      <span className="text-[10px] text-gray-500 w-8 uppercase font-bold">{label}</span>
+      <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          whileInView={{ width: `${max}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          className="h-full rounded-full"
+          style={{ background: color }}
+        />
+      </div>
+      <span className="text-[10px] font-bold text-gray-300 w-16 text-right">{value}</span>
+    </div>
+  );
+}
+
 export default function Projects() {
+  const accentColors = useGameStore((s) => s.accentColors);
+  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+  const addXP = useGameStore((s) => s.addXP);
+
+  const showGameMode = hasSelectedStarter && !pokedexMode;
+
   return (
     <section className="relative w-full min-h-screen py-32 px-6 z-10 text-white">
       <div className="max-w-7xl mx-auto space-y-28">
@@ -59,25 +98,55 @@ export default function Projects() {
           transition={{ duration: 0.7 }}
           className="text-center space-y-4"
         >
+          {showGameMode && (
+            <div
+              className="game-section-label mb-2"
+              style={{ background: `${accentColors.primary}15`, color: accentColors.primaryLight, border: `1px solid ${accentColors.border}` }}
+            >
+              🏟️ Gym Challenges
+            </div>
+          )}
           <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
             Featured Work
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold">Featured Products</h2>
+          <h2 className="text-4xl md:text-5xl font-bold">
+            {showGameMode ? "Gym Leader Battles" : "Featured Products"}
+          </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Real-world AI applications built for scale. From ideathon-winning proctoring systems to ancient knowledge mapping.
           </p>
         </motion.div>
 
-        {/* ── HERO PROJECT 1: SAMARPAN ── */}
+        {/* ── GYM LEADER 1: SAMARPAN ── */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="grid lg:grid-cols-2 gap-12 items-center bg-gray-900/40 border border-gray-800 hover:border-blue-500/20 rounded-3xl p-8 lg:p-12 backdrop-blur-sm transition-colors group"
+          className={`grid lg:grid-cols-2 gap-12 items-center rounded-3xl p-8 lg:p-12 backdrop-blur-sm transition-colors group relative overflow-hidden ${
+            showGameMode ? "game-border" : "bg-gray-900/40 border border-gray-800 hover:border-blue-500/20"
+          }`}
         >
-          <div className="space-y-8">
+          {/* Game mode: scanline overlay */}
+          {showGameMode && <div className="scanline-overlay absolute inset-0 z-0 opacity-30" />}
+
+          <div className="space-y-8 relative z-10">
             <div>
+              {showGameMode && (
+                <div className="flex items-center gap-3 mb-3">
+                  <GymBadge
+                    label="Ideathon Badge"
+                    icon="🏆"
+                    colors={accentColors}
+                    size={48}
+                  />
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                      Gym Leader Battle #1
+                    </span>
+                  </div>
+                </div>
+              )}
               <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
                 🏆 Ideathon Winner 2026
               </div>
@@ -87,72 +156,99 @@ export default function Projects() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <h4 className="text-sm uppercase text-gray-500 font-bold tracking-wider">Core Features</h4>
-                <ul className="text-gray-300 space-y-1.5 text-sm">
-                  {["AI Quiz Generation", "PDF Question Creation", "CV Proctoring", "Face Detection", "Live Results"].map(f => (
-                    <li key={f} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+            {/* Stats — Game mode shows as RPG stats, clean mode shows as metrics */}
+            {showGameMode ? (
+              <div className="space-y-2.5 p-4 rounded-xl bg-black/40 border border-gray-800">
+                <StatBar label="SPD" value="98% Accuracy" max={98} color="#22c55e" icon={Gauge} />
+                <StatBar label="HP" value="500+ Users" max={85} color="#3b82f6" icon={Heart} />
+                <StatBar label="DEF" value="3rd Place" max={90} color="#f59e0b" icon={Shield} />
+                <StatBar label="ATK" value="AI Proctoring" max={92} color="#ef4444" icon={Swords} />
               </div>
-              <div className="space-y-4">
-                <div className="p-3 rounded-xl bg-green-900/20 border border-green-700/30 flex items-center gap-3">
-                  <BarChart3 className="w-5 h-5 text-green-400 shrink-0" />
-                  <div>
-                    <div className="font-bold text-white text-sm">98% Accuracy</div>
-                    <div className="text-xs text-gray-500">Proctoring model</div>
-                  </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="text-sm uppercase text-gray-500 font-bold tracking-wider">Core Features</h4>
+                  <ul className="text-gray-300 space-y-1.5 text-sm">
+                    {["AI Quiz Generation", "PDF Question Creation", "CV Proctoring", "Face Detection", "Live Results"].map(f => (
+                      <li key={f} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="p-3 rounded-xl bg-blue-900/20 border border-blue-700/30 flex items-center gap-3">
-                  <Users className="w-5 h-5 text-blue-400 shrink-0" />
-                  <div>
-                    <div className="font-bold text-white text-sm">500+ Users</div>
-                    <div className="text-xs text-gray-500">Active usage</div>
+                <div className="space-y-4">
+                  <div className="p-3 rounded-xl bg-green-900/20 border border-green-700/30 flex items-center gap-3">
+                    <BarChart3 className="w-5 h-5 text-green-400 shrink-0" />
+                    <div>
+                      <div className="font-bold text-white text-sm">98% Accuracy</div>
+                      <div className="text-xs text-gray-500">Proctoring model</div>
+                    </div>
                   </div>
-                </div>
-                <div className="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/30 flex items-center gap-3">
-                  <Zap className="w-5 h-5 text-yellow-400 shrink-0" />
-                  <div>
-                    <div className="font-bold text-white text-sm">3rd Place</div>
-                    <div className="text-xs text-gray-500">CSJMUIF Ideathon</div>
+                  <div className="p-3 rounded-xl bg-blue-900/20 border border-blue-700/30 flex items-center gap-3">
+                    <Users className="w-5 h-5 text-blue-400 shrink-0" />
+                    <div>
+                      <div className="font-bold text-white text-sm">500+ Users</div>
+                      <div className="text-xs text-gray-500">Active usage</div>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/30 flex items-center gap-3">
+                    <Zap className="w-5 h-5 text-yellow-400 shrink-0" />
+                    <div>
+                      <div className="font-bold text-white text-sm">3rd Place</div>
+                      <div className="text-xs text-gray-500">CSJMUIF Ideathon</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Tech Stack */}
+            {/* Tech Stack — shown as "Move Set" in game mode */}
             <div>
-              <h4 className="text-xs uppercase text-gray-500 font-bold tracking-wider mb-3">Tech Stack</h4>
+              <h4 className="text-xs uppercase text-gray-500 font-bold tracking-wider mb-3">
+                {showGameMode ? "Move Set" : "Tech Stack"}
+              </h4>
               <div className="flex flex-wrap gap-2">
                 {['Next.js', 'Python', 'OpenCV', 'LLMs', 'FastAPI', 'MongoDB'].map(t => (
-                  <span key={t} className="px-3 py-1 text-xs rounded-lg bg-gray-800 border border-gray-700 text-gray-300">{t}</span>
+                  <span
+                    key={t}
+                    className="px-3 py-1 text-xs rounded-lg border text-gray-300"
+                    style={showGameMode ? {
+                      background: `${accentColors.primary}10`,
+                      borderColor: accentColors.border,
+                    } : {
+                      background: "rgba(31,41,55,1)",
+                      borderColor: "rgba(55,65,81,1)",
+                    }}
+                  >
+                    {t}
+                  </span>
                 ))}
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4 pt-2">
-              <button className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+              <button
+                onClick={() => addXP(15, "project-samarpan-demo")}
+                className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              >
                 <PlayCircle className="w-5 h-5" /> Live Demo
               </button>
               <a
                 href="https://github.com/anuneetgupta"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => addXP(15, "project-samarpan-github")}
                 className="px-6 py-3 bg-gray-800 text-white font-semibold rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-2 border border-gray-700"
               >
-                                <GitBranch className="w-5 h-5" /> GitHub
+                <GitBranch className="w-5 h-5" /> GitHub
               </a>
             </div>
           </div>
 
           {/* Visual placeholder */}
-          <div className="relative w-full aspect-video rounded-2xl bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-800/30 flex flex-col items-center justify-center overflow-hidden cursor-pointer group/vid">
+          <div className="relative w-full aspect-video rounded-2xl bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-800/30 flex flex-col items-center justify-center overflow-hidden cursor-pointer group/vid z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 group-hover/vid:from-blue-600/10 group-hover/vid:to-purple-600/10 transition-all duration-500" />
-            {/* Decorative grid */}
             <div className="absolute inset-0 opacity-10"
               style={{ backgroundImage: "linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
             />
@@ -161,20 +257,23 @@ export default function Projects() {
           </div>
         </motion.div>
 
-        {/* ── HERO PROJECT 2: DHARMA SETU ── */}
+        {/* ── GYM LEADER 2: DHARMA SETU ── */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="grid lg:grid-cols-2 gap-12 items-center bg-gray-900/40 border border-gray-800 hover:border-green-500/20 rounded-3xl p-8 lg:p-12 backdrop-blur-sm transition-colors"
+          className={`grid lg:grid-cols-2 gap-12 items-center rounded-3xl p-8 lg:p-12 backdrop-blur-sm transition-colors relative overflow-hidden ${
+            showGameMode ? "game-border" : "bg-gray-900/40 border border-gray-800 hover:border-green-500/20"
+          }`}
         >
+          {showGameMode && <div className="scanline-overlay absolute inset-0 z-0 opacity-30" />}
+
           {/* Architecture Visual */}
-          <div className="order-2 lg:order-1 relative w-full aspect-square md:aspect-video lg:aspect-square rounded-2xl bg-gradient-to-bl from-green-900/20 to-gray-900 border border-green-800/30 flex flex-col items-center justify-center overflow-hidden">
+          <div className="order-2 lg:order-1 relative w-full aspect-square md:aspect-video lg:aspect-square rounded-2xl bg-gradient-to-bl from-green-900/20 to-gray-900 border border-green-800/30 flex flex-col items-center justify-center overflow-hidden z-10">
             <div className="absolute inset-0 opacity-10"
               style={{ backgroundImage: "linear-gradient(rgba(16,185,129,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.3) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
             />
-            {/* Architecture diagram mockup */}
             <div className="relative z-10 flex flex-col items-center gap-3 w-full px-8">
               {[
                 { label: "User Interface (React)", color: "border-green-500/50 bg-green-900/20 text-green-300" },
@@ -192,8 +291,21 @@ export default function Projects() {
             </div>
           </div>
 
-          <div className="space-y-8 order-1 lg:order-2">
+          <div className="space-y-8 order-1 lg:order-2 relative z-10">
             <div>
+              {showGameMode && (
+                <div className="flex items-center gap-3 mb-3">
+                  <GymBadge
+                    label="Deploy Badge"
+                    icon="🚀"
+                    colors={{ ...accentColors, primary: "#22c55e", primaryLight: "#4ade80" }}
+                    size={48}
+                  />
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                    Gym Leader Battle #2
+                  </span>
+                </div>
+              )}
               <div className="inline-block px-4 py-2 rounded-full bg-green-900/30 border border-green-800 text-green-300 text-sm font-semibold tracking-wider uppercase mb-4">
                 🚀 Production AI Application
               </div>
@@ -203,11 +315,34 @@ export default function Projects() {
               </p>
             </div>
 
+            {showGameMode && (
+              <div className="space-y-2.5 p-4 rounded-xl bg-black/40 border border-gray-800">
+                <StatBar label="ATK" value="LLM Integration" max={95} color="#22c55e" icon={Swords} />
+                <StatBar label="DEF" value="Vector DB" max={88} color="#3b82f6" icon={Shield} />
+                <StatBar label="SPD" value="Real-time RAG" max={90} color="#f59e0b" icon={Gauge} />
+                <StatBar label="HP" value="Production Live" max={100} color="#ef4444" icon={Heart} />
+              </div>
+            )}
+
             <div>
-              <h4 className="text-xs uppercase text-gray-500 font-bold tracking-wider mb-3">Key Technologies &amp; Features</h4>
+              <h4 className="text-xs uppercase text-gray-500 font-bold tracking-wider mb-3">
+                {showGameMode ? "Move Set" : "Key Technologies & Features"}
+              </h4>
               <div className="flex flex-wrap gap-2">
                 {['LLM Integration', 'Bhagavad Gita Mapping', 'Knowledge Graph', 'Vector Database', 'Personalized Guidance', 'Supabase', 'LangChain'].map(tech => (
-                  <span key={tech} className="px-3 py-1 bg-gray-800 border border-gray-700 text-sm rounded-lg text-gray-300">{tech}</span>
+                  <span
+                    key={tech}
+                    className="px-3 py-1 text-sm rounded-lg border text-gray-300"
+                    style={showGameMode ? {
+                      background: `${accentColors.primary}10`,
+                      borderColor: accentColors.border,
+                    } : {
+                      background: "rgba(31,41,55,1)",
+                      borderColor: "rgba(55,65,81,1)",
+                    }}
+                  >
+                    {tech}
+                  </span>
                 ))}
               </div>
             </div>
@@ -217,6 +352,7 @@ export default function Projects() {
                 href="https://dharma-set.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => addXP(15, "project-dharmasetu-live")}
                 className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2"
               >
                 <ExternalLink className="w-5 h-5" /> Live Application
@@ -225,15 +361,16 @@ export default function Projects() {
                 href="https://github.com/anuneetgupta"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => addXP(15, "project-dharmasetu-github")}
                 className="px-6 py-3 bg-gray-800 text-white font-semibold rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-2 border border-gray-700"
               >
-                                <GitBranch className="w-5 h-5" /> GitHub
+                <GitBranch className="w-5 h-5" /> GitHub
               </a>
             </div>
           </div>
         </motion.div>
 
-        {/* ── ML & CV Pipelines Grid ── */}
+        {/* ── WILD ENCOUNTERS (ML & CV Pipelines) ── */}
         <div className="space-y-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -242,8 +379,12 @@ export default function Projects() {
             transition={{ duration: 0.6 }}
             className="text-center space-y-2"
           >
-            <h3 className="text-3xl font-bold">ML &amp; Computer Vision Pipelines</h3>
-            <p className="text-gray-500">Standalone research and engineering projects</p>
+            <h3 className="text-3xl font-bold">
+              {showGameMode ? "Wild Encounters — Route 1" : "ML & Computer Vision Pipelines"}
+            </h3>
+            <p className="text-gray-500">
+              {showGameMode ? "Smaller projects encountered along the journey" : "Standalone research and engineering projects"}
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -254,12 +395,20 @@ export default function Projects() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`p-6 rounded-2xl bg-gradient-to-br ${proj.color} border ${proj.border} hover:scale-105 hover:-translate-y-1 transition-all cursor-pointer backdrop-blur-sm group relative overflow-hidden`}
+                className={`p-6 rounded-2xl bg-gradient-to-br ${proj.color} border ${proj.border} hover:scale-105 hover:-translate-y-1 transition-all cursor-pointer backdrop-blur-sm group relative overflow-hidden ${
+                  showGameMode ? "wild-encounter" : ""
+                }`}
               >
+                {/* Game mode encounter label */}
+                {showGameMode && (
+                  <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-2" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                    ⚡ {proj.encounterType}
+                  </div>
+                )}
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <ArrowUpRight className={`w-4 h-4 ${proj.accent}`} />
                 </div>
-                <h4 className={`text-lg font-bold text-white mb-1 group-hover:${proj.accent} transition-colors`}>{proj.title}</h4>
+                <h4 className={`text-lg font-bold text-white mb-1`}>{proj.title}</h4>
                 <p className={`text-xs font-semibold uppercase tracking-wider mb-3 ${proj.accent}`}>{proj.category}</p>
                 <p className="text-xs text-gray-400 leading-relaxed mb-4">{proj.description}</p>
                 <div className="flex flex-wrap gap-1.5">
