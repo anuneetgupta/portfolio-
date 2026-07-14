@@ -3,7 +3,7 @@
 
 import { motion } from "framer-motion";
 import { Download, Eye, Mail, Trophy, Code, Users } from "lucide-react";
-import AvatarCard from "@/components/3d/AvatarCard";
+import HeroIllustration from "@/components/HeroIllustration";
 import { useEffect, useState } from "react";
 
 const ROLES = [
@@ -147,7 +147,7 @@ export default function Hero() {
             transition={{ duration: 1, delay: 0.3 }}
             className="order-1 lg:order-2"
           >
-            <AvatarCard />
+            <HeroIllustration />
           </motion.div>
 
         </div>
