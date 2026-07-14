@@ -75,9 +75,7 @@ type Phase = "boot" | "intro" | "selection" | "flash" | "done";
 export default function StarterSelection() {
   const { hasSelectedStarter, selectStarter, accentColors } = useGameStore();
 
-  const [phase, setPhase] = useState<Phase>(() =>
-    hasSelectedStarter ? "done" : "boot"
-  );
+  const [phase, setPhase] = useState<Phase>("boot");
   const [bootText, setBootText] = useState("");
   const [hoveredStarter, setHoveredStarter] = useState<StarterType | null>(null);
   const [selectedType, setSelectedType] = useState<StarterType | null>(null);
@@ -310,13 +308,14 @@ export default function StarterSelection() {
               >
                 <button
                   onClick={() => {
-                    selectStarter("flowchain");
+                    const starterToUse = hasSelectedStarter && useGameStore.getState().starter ? useGameStore.getState().starter : "flowchain";
+                    selectStarter(starterToUse as StarterType);
                     setPhase("flash");
                     setTimeout(() => setPhase("done"), 800);
                   }}
                   className="text-xs text-gray-600 hover:text-gray-400 transition-colors underline underline-offset-4"
                 >
-                  Skip intro →
+                  {hasSelectedStarter ? "Resume Adventure →" : "Skip intro →"}
                 </button>
               </motion.div>
             </motion.div>
