@@ -38,13 +38,14 @@ export default function Skills() {
   const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [flippedCount, setFlippedCount] = useState(0);
+  const [activeTab, setActiveTab] = useState<SkillType | "All">("All");
 
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
   const addXP = useGameStore((s) => s.addXP);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   // Track skill card flips for XP
   const handleFlip = () => {
@@ -55,7 +56,7 @@ export default function Skills() {
     }
   };
 
-  // Original sphere animation (used in Pokédex/clean mode)
+  // Original sphere animation (used in plain/clean mode)
   useEffect(() => {
     if (showGameMode) return; // Don't run sphere in game mode
 
@@ -112,7 +113,18 @@ export default function Skills() {
             ⚔️ Training Grounds
           </div>
         )}
-        <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
+        <div 
+          className="inline-block px-4 py-2 rounded-full text-sm font-semibold tracking-wider uppercase mb-4 border"
+          style={showGameMode ? {
+            background: `${accentColors.primary}20`,
+            borderColor: `${accentColors.primary}40`,
+            color: accentColors.primaryLight
+          } : {
+            background: "rgba(30,58,138,0.3)",
+            borderColor: "rgba(29,78,216,0.4)",
+            color: "#93c5fd"
+          }}
+        >
           Expertise
         </div>
         <h2 className="text-4xl md:text-5xl font-bold flex items-center justify-center gap-4">
@@ -126,21 +138,60 @@ export default function Skills() {
 
       {/* ── GAME MODE: Pokédex Grid ── */}
       {showGameMode ? (
-        <div className="w-full max-w-5xl px-6 z-20">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {skills.map((skill, index) => (
-              <PokedexCard
-                key={skill.name}
-                name={skill.name}
-                type={skill.type}
-                proficiency={skill.proficiency}
-                experience={skill.experience}
-                projects={skill.projects}
-                accentColor={accentColors.primary}
-                index={index}
-                onFlip={handleFlip}
-              />
+        <div className="w-full max-w-5xl px-6 z-20 flex flex-col items-center">
+          
+          {/* Type Filter Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-8 p-1.5 bg-black/40 border border-gray-800 rounded-xl backdrop-blur-sm">
+            {(["All", "Language", "Domain", "Framework", "Tool"] as (SkillType | "All")[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all border ${
+                  activeTab === tab
+                    ? "text-white"
+                    : "text-gray-500 border-transparent hover:text-gray-300"
+                }`}
+                style={
+                  activeTab === tab
+                    ? {
+                        background: `${accentColors.primary}20`,
+                        borderColor: accentColors.primary,
+                        textShadow: `0 0 8px ${accentColors.glow}`,
+                      }
+                    : {}
+                }
+              >
+                {tab}
+              </button>
             ))}
+          </div>
+
+          <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <AnimatePresence mode="popLayout">
+              {skills
+                .filter((s) => activeTab === "All" || s.type === activeTab)
+                .map((skill, index) => (
+                  <motion.div
+                    key={skill.name}
+                    layout
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <PokedexCard
+                      name={skill.name}
+                      type={skill.type}
+                      proficiency={skill.proficiency}
+                      experience={skill.experience}
+                      projects={skill.projects}
+                      accentColor={accentColors.primary}
+                      index={index}
+                      onFlip={handleFlip}
+                    />
+                  </motion.div>
+                ))}
+            </AnimatePresence>
           </div>
         </div>
       ) : (

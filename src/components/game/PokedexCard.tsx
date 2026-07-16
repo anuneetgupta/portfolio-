@@ -45,7 +45,9 @@ export default function PokedexCard({
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
-    if (onFlip) onFlip();
+    if (!isFlipped && onFlip) {
+      onFlip();
+    }
   };
 
   return (
@@ -70,12 +72,13 @@ export default function PokedexCard({
       >
         {/* ── FRONT ── */}
         <div
-          className="absolute inset-0 rounded-xl overflow-hidden border"
+          className="absolute inset-0 rounded-xl overflow-hidden border transition-shadow duration-300 group-hover:shadow-[0_0_15px_var(--hover-color)]"
           style={{
             backfaceVisibility: "hidden",
             background: "rgba(15,15,15,0.9)",
             borderColor: "rgba(255,255,255,0.08)",
-          }}
+            "--hover-color": accentColor,
+          } as React.CSSProperties}
         >
           {/* Scanline texture */}
           <div
@@ -127,13 +130,14 @@ export default function PokedexCard({
 
         {/* ── BACK ── */}
         <div
-          className="absolute inset-0 rounded-xl overflow-hidden border"
+          className="absolute inset-0 rounded-xl overflow-hidden border transition-shadow duration-300 shadow-[0_0_15px_var(--hover-color)]"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
             background: "rgba(15,15,15,0.95)",
             borderColor: "rgba(255,255,255,0.1)",
-          }}
+            "--hover-color": accentColor,
+          } as React.CSSProperties}
         >
           {/* Scanline texture */}
           <div

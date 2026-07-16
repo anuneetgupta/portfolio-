@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { Menu, X, Zap, BookOpen } from "lucide-react";
+import { Menu, X, Zap, BookOpen, Map } from "lucide-react";
 import { useGameStore } from "@/lib/gameStore";
 
 /* ── Nav link data with game-mode names ── */
@@ -22,10 +22,11 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled]       = useState(false);
   const [menuOpen, setMenuOpen]           = useState(false);
 
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
-  const togglePokedexMode = useGameStore((s) => s.togglePokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
+  const togglePlainMode = useGameStore((s) => s.togglePlainMode);
   const accentColors = useGameStore((s) => s.accentColors);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+  const setIsMapOpen = useGameStore((s) => s.setIsMapOpen);
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -68,7 +69,7 @@ export default function Navbar() {
     }
   }, []);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   return (
     <>
@@ -104,7 +105,7 @@ export default function Navbar() {
           {/* Logo */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2 group focus:outline-none"
           >
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
@@ -120,57 +121,67 @@ export default function Navbar() {
             </span>
           </button>
 
-          {/* Desktop Links */}
+          {/* Desktop Links (or Map Button in Game Mode) */}
           <ul className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map(({ label, gameName, href }) => {
-              const id = href.replace("#", "");
-              const isActive = activeSection === id;
-              const displayLabel = showGameMode ? gameName : label;
-              return (
-                <li key={href}>
-                  <button
-                    onClick={() => handleNavClick(href)}
-                    className={`relative px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                      isActive
-                        ? "text-white"
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-pill"
-                        className="absolute inset-0 rounded-lg border"
-                        style={{
-                          background: showGameMode ? `${accentColors.primary}15` : "rgba(255,255,255,0.1)",
-                          borderColor: showGameMode ? accentColors.border : "rgba(255,255,255,0.1)",
-                        }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10" style={showGameMode && isActive ? { color: accentColors.primaryLight } : {}}>
-                      {displayLabel}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
+            {showGameMode ? (
+              <li>
+                <button
+                  onClick={() => setIsMapOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition-all hover:scale-105"
+                  style={{
+                    background: `${accentColors.primary}20`,
+                    borderColor: accentColors.border,
+                    color: accentColors.primaryLight,
+                    borderWidth: "1px",
+                  }}
+                >
+                  <Map className="w-4 h-4" />
+                  Open Route Map
+                </button>
+              </li>
+            ) : (
+              NAV_LINKS.map(({ label, href }) => {
+                const id = href.replace("#", "");
+                const isActive = activeSection === id;
+                return (
+                  <li key={href}>
+                    <button
+                      onClick={() => handleNavClick(href)}
+                      className={`relative px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "text-white"
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-pill"
+                          className="absolute inset-0 rounded-lg border bg-white/10 border-white/10"
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10">{label}</span>
+                    </button>
+                  </li>
+                );
+              })
+            )}
           </ul>
 
-          {/* CTA + Pokédex Toggle + Mobile Toggle */}
+          {/* CTA + Mode Toggle + Mobile Menu */}
           <div className="flex items-center gap-2">
-            {/* Pokédex Mode toggle */}
             {hasSelectedStarter && (
               <button
-                onClick={togglePokedexMode}
+                onClick={togglePlainMode}
                 className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all border ${
-                  pokedexMode
+                  plainMode
                     ? "bg-white/10 border-white/20 text-white"
                     : "bg-transparent border-gray-700 text-gray-400 hover:text-white hover:border-gray-500"
                 }`}
-                aria-label={pokedexMode ? "Switch to game mode" : "Switch to Pokédex mode"}
+                aria-label={plainMode ? "Switch to game mode" : "Switch to plain mode"}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>{pokedexMode ? "Game Mode" : "Pokédex"}</span>
+                <span>{plainMode ? "Game Mode" : "Plain Mode"}</span>
               </button>
             )}
 
@@ -203,51 +214,62 @@ export default function Navbar() {
               exit={{   opacity: 0, y: -10, scaleY: 0.9 }}
               transition={{ duration: 0.2 }}
               style={{ transformOrigin: "top" }}
-              className="absolute top-full mt-2 left-4 right-4 bg-gray-950/95 border border-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden"
+              className="absolute top-full mt-2 left-4 right-4 bg-gray-950/95 border border-gray-800 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden"
             >
               <ul className="flex flex-col py-2">
-                {NAV_LINKS.map(({ label, gameName, href }) => {
-                  const id = href.replace("#", "");
-                  const isActive = activeSection === id;
-                  const displayLabel = showGameMode ? gameName : label;
-                  return (
-                    <li key={href}>
-                      <button
-                        onClick={() => handleNavClick(href)}
-                        className={`w-full text-left px-6 py-3.5 text-sm font-medium transition-colors flex items-center gap-3 ${
-                          isActive
-                            ? "bg-white/5"
-                            : "text-gray-300 hover:text-white hover:bg-white/5"
-                        }`}
-                        style={isActive ? { color: showGameMode ? accentColors.primaryLight : "#60a5fa" } : {}}
-                      >
-                        {isActive && (
-                          <span
-                            className="w-1.5 h-1.5 rounded-full animate-pulse"
-                            style={{ background: showGameMode ? accentColors.primary : "#60a5fa" }}
-                          />
-                        )}
-                        {displayLabel}
-                        {showGameMode && (
-                          <span className="ml-auto text-[10px] text-gray-600">{label}</span>
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-
-                {/* Pokédex Mode toggle (mobile) */}
-                {hasSelectedStarter && (
-                  <li className="px-4 pb-2 pt-1">
+                {showGameMode ? (
+                  <li className="px-4 pb-2 pt-2">
                     <button
                       onClick={() => {
-                        togglePokedexMode();
+                        setIsMapOpen(true);
+                        setMenuOpen(false);
+                      }}
+                      className="flex items-center justify-center gap-2 w-full py-4 text-sm font-bold rounded-xl transition-all border"
+                      style={{
+                        background: `${accentColors.primary}20`,
+                        borderColor: accentColors.border,
+                        color: accentColors.primaryLight,
+                      }}
+                    >
+                      <Map className="w-4 h-4" />
+                      Open Route Map
+                    </button>
+                  </li>
+                ) : (
+                  NAV_LINKS.map(({ label, href }) => {
+                    const id = href.replace("#", "");
+                    const isActive = activeSection === id;
+                    return (
+                      <li key={href}>
+                        <button
+                          onClick={() => handleNavClick(href)}
+                          className={`w-full text-left px-6 py-3.5 text-sm font-medium transition-colors flex items-center gap-3 ${
+                            isActive
+                              ? "bg-white/5 text-white"
+                              : "text-gray-300 hover:text-white hover:bg-white/5"
+                          }`}
+                        >
+                          {isActive && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                          )}
+                          {label}
+                        </button>
+                      </li>
+                    );
+                  })
+                )}
+
+                {hasSelectedStarter && (
+                  <li className="px-4 pb-2 pt-2 border-t border-gray-800/50 mt-1">
+                    <button
+                      onClick={() => {
+                        togglePlainMode();
                         setMenuOpen(false);
                       }}
                       className="flex items-center justify-center gap-2 w-full py-3 bg-gray-800 text-gray-300 text-sm font-semibold rounded-xl hover:bg-gray-700 transition-colors border border-gray-700"
                     >
                       <BookOpen className="w-4 h-4" />
-                      {pokedexMode ? "Switch to Game Mode" : "Switch to Pokédex Mode"}
+                      {plainMode ? "Switch to Game Mode" : "Switch to Plain Mode"}
                     </button>
                   </li>
                 )}

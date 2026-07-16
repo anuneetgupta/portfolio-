@@ -22,7 +22,7 @@ export default function GameHUD() {
     hasSelectedStarter,
     xp,
     evolutionStage,
-    pokedexMode,
+    plainMode,
     accentColors,
   } = useGameStore();
 
@@ -30,13 +30,13 @@ export default function GameHUD() {
   const [showBonus, setShowBonus] = useState(false);
   const [prevXP, setPrevXP] = useState(xp);
 
-  // Don't render if no starter selected or in Pokédex mode
-  if (!hasSelectedStarter || !starter || pokedexMode) return null;
+  // Don't render if no starter selected or in Plain Mode
+  if (!hasSelectedStarter || !starter || plainMode) return null;
 
   const { next, label } = getXPForNextStage(xp);
   const stageLabel = getStageLabel(evolutionStage);
 
-  // XP bar percentage (within current stage)
+  // XP bar percentage (within current stage) — guard against division by zero at shiny
   const prevThreshold =
     evolutionStage === 1
       ? 0
@@ -44,12 +44,18 @@ export default function GameHUD() {
         ? XP_THRESHOLDS.stage2
         : evolutionStage === 3
           ? XP_THRESHOLDS.stage3
-          : XP_THRESHOLDS.shiny;
+          : XP_THRESHOLDS.shiny; // shiny: prev threshold = shiny threshold itself
 
-  const progressInStage = Math.min(
-    ((xp - prevThreshold) / (next - prevThreshold)) * 100,
-    100
-  );
+  const nextThreshold =
+    evolutionStage === "shiny" ? XP_THRESHOLDS.shiny : next;
+
+  const progressInStage =
+    evolutionStage === "shiny"
+      ? 100
+      : Math.min(
+          ((xp - prevThreshold) / (nextThreshold - prevThreshold)) * 100,
+          100
+        );
 
   const isMaxed = evolutionStage === "shiny";
 
@@ -139,7 +145,7 @@ export default function GameHUD() {
                         style={{
                           background: accentColors.gradient,
                         }}
-                        initial={{ width: 0 }}
+                        initial={false}
                         animate={{ width: `${isMaxed ? 100 : progressInStage}%` }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                       />

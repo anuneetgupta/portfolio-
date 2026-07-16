@@ -51,7 +51,7 @@ const DEFAULT_ACCENT: AccentColors = ACCENT_MAP.flowchain;
 export const XP_THRESHOLDS = {
   stage2: 41,
   stage3: 81,
-  shiny: 121,
+  shiny: 120, // 120+ XP unlocks shiny / "fully explored" CTA
 };
 
 /* ── Derive evolution stage from XP ── */
@@ -78,8 +78,9 @@ interface GameState {
   visitedSections: string[];
   xpSources: string[]; // Dedup: each source string tracked
 
-  /* Mode */
-  pokedexMode: boolean;
+  /* Mode — plainMode=true strips all game chrome for a clean recruiter layout */
+  plainMode: boolean;
+  isMapOpen: boolean;
 
   /* Derived */
   accentColors: AccentColors;
@@ -88,8 +89,9 @@ interface GameState {
   selectStarter: (type: StarterType) => void;
   addXP: (amount: number, source: string) => void;
   visitSection: (id: string) => void;
-  togglePokedexMode: () => void;
+  togglePlainMode: () => void;
   setIsEvolving: (v: boolean) => void;
+  setIsMapOpen: (v: boolean) => void;
   resetGame: () => void;
 }
 
@@ -105,7 +107,8 @@ export const useGameStore = create<GameState>()(
       isEvolving: false,
       visitedSections: [],
       xpSources: [],
-      pokedexMode: false,
+      plainMode: false,
+      isMapOpen: false,
       accentColors: DEFAULT_ACCENT,
 
       /* ── Actions ── */
@@ -145,10 +148,12 @@ export const useGameStore = create<GameState>()(
         state.addXP(10, source);
       },
 
-      togglePokedexMode: () =>
-        set((s) => ({ pokedexMode: !s.pokedexMode })),
+      togglePlainMode: () =>
+        set((s) => ({ plainMode: !s.plainMode })),
 
       setIsEvolving: (v) => set({ isEvolving: v }),
+      
+      setIsMapOpen: (v) => set({ isMapOpen: v }),
 
       resetGame: () =>
         set({
@@ -160,7 +165,7 @@ export const useGameStore = create<GameState>()(
           isEvolving: false,
           visitedSections: [],
           xpSources: [],
-          pokedexMode: false,
+          plainMode: false,
           accentColors: DEFAULT_ACCENT,
         }),
     }),
@@ -175,7 +180,7 @@ export const useGameStore = create<GameState>()(
         prevEvolutionStage: state.prevEvolutionStage,
         visitedSections: state.visitedSections,
         xpSources: state.xpSources,
-        pokedexMode: state.pokedexMode,
+        plainMode: state.plainMode,
         accentColors: state.accentColors,
       }),
     }

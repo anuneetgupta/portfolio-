@@ -138,15 +138,26 @@ body {
   pointer-events: none;
 }
 
-/* ── Dialogue box styling ── */
+/* ── Dialogue box styling (Pixel Border Variant) ── */
 .dialogue-box {
-  background: rgba(0, 0, 0, 0.92);
-  border: 2px solid var(--accent-border);
+  background: #ffffff;
+  border: 6px solid #000000;
   border-radius: 8px;
   padding: 16px 20px;
   box-shadow:
-    0 0 20px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    inset 0 0 0 4px #3b82f6,
+    0 0 20px rgba(0, 0, 0, 0.5);
+  color: #000000;
+}
+
+/* For dark mode dialogue boxes */
+.dialogue-box.dark-dialogue {
+  background: #000000;
+  border: 6px solid #ffffff;
+  box-shadow:
+    inset 0 0 0 4px var(--accent-primary),
+    0 0 20px rgba(0, 0, 0, 0.8);
+  color: #ffffff;
 }
 
 /* ── Game section header ── */
@@ -221,14 +232,35 @@ body {
 
 /* ── Reduced motion: disable game animations ── */
 @media (prefers-reduced-motion: reduce) {
-  .evolution-flash,
-  .wild-encounter:hover,
-  .gym-badge:hover,
-  .xp-shimmer::after {
-    animation: none !important;
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
   
   .scanline-overlay {
-    display: none;
+    display: none !important;
   }
+}
+
+/* ── Premium Enhancements ── */
+@keyframes text-glow {
+  0%, 100% { text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow); }
+  50% { text-shadow: 0 0 20px var(--accent-primary), 0 0 30px var(--accent-primary); }
+}
+
+.animate-text-glow {
+  animation: text-glow 3s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-shift {
+  background-size: 200% auto;
+  animation: gradient-shift 4s ease infinite;
 }

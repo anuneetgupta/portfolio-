@@ -63,11 +63,11 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
 
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
   const addXP = useGameStore((s) => s.addXP);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,10 +113,21 @@ export default function Contact() {
               🛒 Poké Mart
             </div>
           )}
-          <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
+          <div 
+            className="inline-block px-4 py-2 rounded-full text-sm font-semibold tracking-wider uppercase mb-4 border"
+            style={showGameMode ? {
+              background: `${accentColors.primary}20`,
+              borderColor: `${accentColors.primary}40`,
+              color: accentColors.primaryLight
+            } : {
+              background: "rgba(30,58,138,0.3)",
+              borderColor: "rgba(29,78,216,0.4)",
+              color: "#93c5fd"
+            }}
+          >
             Get In Touch
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold">
+          <h2 className={`text-4xl md:text-5xl font-bold ${showGameMode ? 'animate-text-glow' : ''}`}>
             {showGameMode ? "Talk to Nurse Joy" : "Let's Build Something"}
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -134,11 +145,12 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className={`p-8 md:p-10 rounded-3xl backdrop-blur-md relative overflow-hidden ${
+            className={`p-8 md:p-10 backdrop-blur-md relative overflow-hidden ${
               showGameMode
-                ? "game-border bg-black/60"
-                : "bg-gray-900/50 border border-gray-800"
+                ? "dialogue-box dark-dialogue bg-black/90 rounded-none border-4"
+                : "bg-gray-900/50 border border-gray-800 rounded-3xl"
             }`}
+            style={showGameMode ? { borderColor: accentColors.border } : {}}
           >
             {/* Scanline in game mode */}
             {showGameMode && <div className="scanline-overlay absolute inset-0 z-0 opacity-20 pointer-events-none" />}
@@ -218,10 +230,13 @@ export default function Contact() {
               <button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="w-full py-4 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-                style={{
-                  background: `linear-gradient(135deg, ${showGameMode ? accentColors.primary : "#2563eb"}, ${showGameMode ? accentColors.primaryLight : "#3b82f6"})`,
-                  boxShadow: `0 0 20px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.3)"}`,
+                className={`w-full py-4 font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed ${showGameMode ? "rounded-none border-2 text-white hover:bg-white/10 hover:-translate-y-1" : "rounded-xl text-white"}`}
+                style={showGameMode ? {
+                  borderColor: accentColors.primary,
+                  fontFamily: "var(--font-pixel), monospace"
+                } : {
+                  background: `linear-gradient(135deg, #2563eb, #3b82f6)`,
+                  boxShadow: `0 0 20px rgba(37,99,235,0.3)`,
                 }}
               >
                 {isSubmitting ? (
@@ -244,7 +259,13 @@ export default function Contact() {
             className="flex flex-col justify-between h-full space-y-10"
           >
             {/* 3D Canvas */}
-            <div className="relative w-full h-[300px] md:h-[400px] rounded-3xl bg-gradient-to-br from-blue-900/10 to-purple-900/10 border border-gray-800 overflow-hidden cursor-grab active:cursor-grabbing">
+            <div 
+              className="relative w-full h-[300px] md:h-[400px] rounded-3xl bg-gradient-to-br from-blue-900/10 to-purple-900/10 border border-gray-800 overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:border-blue-500/50"
+              style={showGameMode ? {
+                boxShadow: `0 0 20px ${accentColors.glow}`,
+                borderColor: accentColors.border,
+              } : {}}
+            >
               <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
                 <ambientLight intensity={0.2} />
                 <Environment preset="city" />

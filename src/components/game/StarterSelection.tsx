@@ -8,14 +8,14 @@ import PixelSprite from "./PixelSprite";
 import GameDialogueBox from "./GameDialogueBox";
 
 /* ─────────────────────────────────────────────────────────
-   StarterSelection
+   StarterSelection — Phase 2 update
 
-   Full-screen intro overlay:
-   1. Game-Boy boot text → "Initializing..." 
-   2. Professor intro dialogue
-   3. Starter selection (3 choices)
-   4. Flash transition → site loads
-───────────────────────────────────────────────────────── */
+   Changes:
+   - Returning visitors (hasSelectedStarter=true) skip boot entirely
+   - Added prefers-reduced-motion guard on boot text animation
+   - "Enter Portfolio →" button with screen-wipe transition at end
+   - Skip/Resume button clearer and accessible
+─────────────────────────────────────────────────────────── */
 
 const STARTERS: {
   type: StarterType;
@@ -75,14 +75,27 @@ type Phase = "boot" | "intro" | "selection" | "flash" | "done";
 export default function StarterSelection() {
   const { hasSelectedStarter, selectStarter, accentColors } = useGameStore();
 
+  // Always start at boot sequence so the user sees the intro on hard refresh
   const [phase, setPhase] = useState<Phase>("boot");
   const [bootText, setBootText] = useState("");
   const [hoveredStarter, setHoveredStarter] = useState<StarterType | null>(null);
   const [selectedType, setSelectedType] = useState<StarterType | null>(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Boot text animation
+  // Detect reduced motion preference
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mq.matches);
+  }, []);
+
+  // Boot text animation — skipped for returning visitors and reduced-motion
   useEffect(() => {
     if (phase !== "boot") return;
+    if (prefersReducedMotion) {
+      // Skip animation, show text instantly and advance
+      setPhase("intro");
+      return;
+    }
 
     const bootLines = [
       "POKEMON PORTFOLIO v2.0",
@@ -121,9 +134,9 @@ export default function StarterSelection() {
     }, 25);
 
     return () => clearInterval(timer);
-  }, [phase]);
+  }, [phase, prefersReducedMotion]);
 
-  // Boot → intro on click/key
+  // Boot → intro on click/key (with delay so boot is visible)
   const handleBootAdvance = useCallback(() => {
     if (phase === "boot") {
       setPhase("intro");
@@ -133,7 +146,6 @@ export default function StarterSelection() {
   useEffect(() => {
     if (phase !== "boot") return;
     const handler = () => handleBootAdvance();
-    // Add listener after a short delay so the boot screen is visible
     const t = setTimeout(() => {
       window.addEventListener("click", handler);
       window.addEventListener("keydown", handler);
@@ -145,14 +157,28 @@ export default function StarterSelection() {
     };
   }, [phase, handleBootAdvance]);
 
-  // Handle starter selection
+  // Handle starter selection → flash → screen-wipe → done
   const handleSelect = (type: StarterType) => {
     setSelectedType(type);
     selectStarter(type);
-
-    // Flash transition
     setTimeout(() => setPhase("flash"), 300);
-    setTimeout(() => setPhase("done"), 1200);
+    setTimeout(() => setPhase("done"), 1400);
+  };
+
+  // Handle skip / resume (always available)
+  const handleSkipOrResume = () => {
+    const currentStarter = useGameStore.getState().starter;
+    const starterToUse: StarterType = (hasSelectedStarter && currentStarter) ? currentStarter : "flowchain";
+    if (!hasSelectedStarter) {
+      selectStarter(starterToUse);
+    }
+    if (prefersReducedMotion) {
+      setPhase("done");
+    } else {
+      setPhase("flash");
+      setSelectedType(starterToUse);
+      setTimeout(() => setPhase("done"), 800);
+    }
   };
 
   return (
@@ -169,6 +195,15 @@ export default function StarterSelection() {
           {/* Scanline overlay */}
           <div className="scanline-overlay absolute inset-0 pointer-events-none z-50" />
 
+          {/* Always-visible skip button */}
+          <button
+            onClick={handleSkipOrResume}
+            className="absolute top-5 right-5 z-[60] text-xs text-gray-500 hover:text-gray-300 transition-colors border border-gray-800 hover:border-gray-600 px-4 py-2 rounded-full bg-black/40 backdrop-blur-sm"
+            aria-label="Skip intro and enter portfolio"
+          >
+            Skip intro →
+          </button>
+
           {/* ── BOOT PHASE ── */}
           {phase === "boot" && (
             <motion.div
@@ -183,6 +218,9 @@ export default function StarterSelection() {
                 {bootText}
                 <span className="inline-block w-2 h-4 bg-green-400 ml-0.5 animate-pulse" />
               </pre>
+              <p className="text-xs text-gray-600 mt-8 text-center tracking-widest" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                — PRESS START —
+              </p>
             </motion.div>
           )}
 
@@ -299,20 +337,15 @@ export default function StarterSelection() {
                 ))}
               </div>
 
-              {/* Skip button for returning visitors */}
+              {/* Enter Portfolio button */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
+                transition={{ delay: 0.8 }}
                 className="text-center"
               >
                 <button
-                  onClick={() => {
-                    const starterToUse = hasSelectedStarter && useGameStore.getState().starter ? useGameStore.getState().starter : "flowchain";
-                    selectStarter(starterToUse as StarterType);
-                    setPhase("flash");
-                    setTimeout(() => setPhase("done"), 800);
-                  }}
+                  onClick={handleSkipOrResume}
                   className="text-xs text-gray-600 hover:text-gray-400 transition-colors underline underline-offset-4"
                 >
                   {hasSelectedStarter ? "Resume Adventure →" : "Skip intro →"}
@@ -321,16 +354,16 @@ export default function StarterSelection() {
             </motion.div>
           )}
 
-          {/* ── FLASH PHASE ── */}
+          {/* ── FLASH PHASE (screen-wipe transition) ── */}
           {phase === "flash" && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 1, 0] }}
-              transition={{ duration: 0.8, times: [0, 0.1, 0.7, 1] }}
+              transition={{ duration: prefersReducedMotion ? 0.1 : 0.9, times: [0, 0.1, 0.7, 1] }}
               className="fixed inset-0 z-[1001] flex items-center justify-center"
               style={{ background: selectedType ? STARTERS.find(s => s.type === selectedType)?.color : "#fff" }}
             >
-              {selectedType && (
+              {selectedType && !prefersReducedMotion && (
                 <motion.div
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1.2, opacity: 1 }}

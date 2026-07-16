@@ -6,13 +6,13 @@ import { useGameStore } from "@/lib/gameStore";
 
 export default function Footer() {
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
   const xp = useGameStore((s) => s.xp);
   const evolutionStage = useGameStore((s) => s.evolutionStage);
   const visitedSections = useGameStore((s) => s.visitedSections);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
   const currentYear = new Date().getFullYear();
 
   return (
@@ -30,8 +30,8 @@ export default function Footer() {
               fontFamily: "var(--font-pixel), monospace",
             }}
           >
-            <Save className="w-3.5 h-3.5" />
-            Game Saved · {visitedSections.length}/8 locations visited · {xp} XP · Stage {evolutionStage === "shiny" ? "★" : evolutionStage}
+            <Save className="w-3.5 h-3.5 animate-pulse" />
+            <span className="opacity-90">Game Saved · {visitedSections.length}/8 locations visited · {xp} XP · Stage {evolutionStage === "shiny" ? "★" : evolutionStage}</span>
           </div>
         )}
 

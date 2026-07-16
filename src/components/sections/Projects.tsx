@@ -2,7 +2,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, GitBranch, PlayCircle, BarChart3, Users, Zap, ArrowUpRight, Swords, Shield, Heart, Gauge } from "lucide-react";
 import { useGameStore } from "@/lib/gameStore";
 import GymBadge from "@/components/game/GymBadge";
@@ -79,12 +79,14 @@ function StatBar({ label, value, max, color, icon: Icon }: {
 }
 
 export default function Projects() {
+  const [expandedEncounter, setExpandedEncounter] = useState<number | null>(null);
+
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
   const addXP = useGameStore((s) => s.addXP);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   return (
     <section className="relative w-full min-h-screen py-32 px-6 z-10 text-white">
@@ -106,7 +108,18 @@ export default function Projects() {
               🏟️ Gym Challenges
             </div>
           )}
-          <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
+          <div 
+            className="inline-block px-4 py-2 rounded-full text-sm font-semibold tracking-wider uppercase mb-4 border"
+            style={showGameMode ? {
+              background: `${accentColors.primary}20`,
+              borderColor: `${accentColors.primary}40`,
+              color: accentColors.primaryLight
+            } : {
+              background: "rgba(30,58,138,0.3)",
+              borderColor: "rgba(29,78,216,0.4)",
+              color: "#93c5fd"
+            }}
+          >
             Featured Work
           </div>
           <h2 className="text-4xl md:text-5xl font-bold">
@@ -144,6 +157,10 @@ export default function Projects() {
                     <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold" style={{ fontFamily: "var(--font-pixel), monospace" }}>
                       Gym Leader Battle #1
                     </span>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-red-900/50 border border-red-700 text-red-400 text-xs font-bold italic" style={{ fontFamily: "var(--font-pixel), monospace" }}>VS</span>
+                      <span className="text-white font-bold tracking-widest uppercase">Leader Samarpan</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -301,9 +318,15 @@ export default function Projects() {
                     colors={{ ...accentColors, primary: "#22c55e", primaryLight: "#4ade80" }}
                     size={48}
                   />
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold" style={{ fontFamily: "var(--font-pixel), monospace" }}>
-                    Gym Leader Battle #2
-                  </span>
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                      Gym Leader Battle #2
+                    </span>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-red-900/50 border border-red-700 text-red-400 text-xs font-bold italic" style={{ fontFamily: "var(--font-pixel), monospace" }}>VS</span>
+                      <span className="text-white font-bold tracking-widest uppercase">Leader Dharma Setu</span>
+                    </div>
+                  </div>
                 </div>
               )}
               <div className="inline-block px-4 py-2 rounded-full bg-green-900/30 border border-green-800 text-green-300 text-sm font-semibold tracking-wider uppercase mb-4">
@@ -395,14 +418,22 @@ export default function Projects() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`p-6 rounded-2xl bg-gradient-to-br ${proj.color} border ${proj.border} hover:scale-105 hover:-translate-y-1 transition-all cursor-pointer backdrop-blur-sm group relative overflow-hidden ${
-                  showGameMode ? "wild-encounter" : ""
-                }`}
+                onClick={() => setExpandedEncounter(expandedEncounter === i ? null : i)}
+                className={`p-6 rounded-2xl bg-gradient-to-br ${proj.color} border ${proj.border} hover:-translate-y-1 transition-all cursor-pointer backdrop-blur-sm group relative overflow-hidden ${
+                  showGameMode ? "wild-encounter" : "hover:scale-105"
+                } ${expandedEncounter === i ? "col-span-1 md:col-span-2 lg:col-span-2 row-span-2 shadow-[0_0_30px_rgba(255,255,255,0.1)] ring-2 ring-white/20" : ""}`}
               >
                 {/* Game mode encounter label */}
                 {showGameMode && (
-                  <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider mb-2" style={{ fontFamily: "var(--font-pixel), monospace" }}>
-                    ⚡ {proj.encounterType}
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="text-[9px] text-gray-500 font-bold uppercase tracking-wider" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                      ⚡ {proj.encounterType}
+                    </div>
+                    {expandedEncounter === i && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white font-bold animate-pulse">
+                        FIGHTING...
+                      </span>
+                    )}
                   </div>
                 )}
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -410,7 +441,34 @@ export default function Projects() {
                 </div>
                 <h4 className={`text-lg font-bold text-white mb-1`}>{proj.title}</h4>
                 <p className={`text-xs font-semibold uppercase tracking-wider mb-3 ${proj.accent}`}>{proj.category}</p>
-                <p className="text-xs text-gray-400 leading-relaxed mb-4">{proj.description}</p>
+                
+                <AnimatePresence>
+                  {expandedEncounter === i ? (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <p className="text-sm text-gray-300 leading-relaxed mb-4">{proj.description} The system was trained on custom datasets to ensure robust performance across various edge cases, achieving state-of-transform benchmarks in local testing environments.</p>
+                      <div className="flex items-center gap-4 mb-4 p-3 rounded-lg bg-black/40 border border-white/5">
+                        <div className="flex-1">
+                          <div className="text-xs text-gray-500 mb-1">HP</div>
+                          <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-green-500 w-3/4 rounded-full" />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-xs text-gray-500 mb-1">Accuracy</div>
+                          <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 w-11/12 rounded-full" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <p className="text-xs text-gray-400 leading-relaxed mb-4 line-clamp-2">{proj.description}</p>
+                  )}
+                </AnimatePresence>
                 <div className="flex flex-wrap gap-1.5">
                   {proj.tech.map(t => (
                     <span key={t} className="px-2 py-0.5 text-[10px] rounded-md bg-black/30 text-gray-400 border border-white/10">{t}</span>

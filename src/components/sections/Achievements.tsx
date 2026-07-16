@@ -62,10 +62,10 @@ export default function Achievements() {
   const [activeCard, setActiveCard] = useState(0);
 
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   return (
     <section className="relative w-full min-h-screen py-32 px-6 z-10 text-white bg-black/50 border-t border-gray-900">
@@ -109,8 +109,29 @@ export default function Achievements() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="relative w-full h-[400px] rounded-3xl bg-gradient-to-b from-gray-900 to-black border border-gray-800 overflow-hidden group">
-              <div className="absolute inset-0 bg-yellow-500/5 group-hover:bg-yellow-500/10 transition-colors pointer-events-none z-10" />
+            <div 
+              className={`relative w-full h-[400px] overflow-hidden group transition-all ${
+                showGameMode 
+                  ? "rounded-xl border-4 border-gray-700 bg-[#0a0a0a] shadow-[inset_0_0_20px_rgba(0,0,0,1)]" 
+                  : "rounded-3xl bg-gradient-to-b from-gray-900 to-black border border-gray-800"
+              }`}
+            >
+              {/* Game Mode: Badge Case details */}
+              {showGameMode && (
+                <>
+                  <div className="absolute top-3 left-4 z-20 text-[10px] font-bold text-yellow-500 uppercase tracking-widest" style={{ fontFamily: "var(--font-pixel), monospace", textShadow: "1px 1px 0px #000" }}>
+                    Badge Case
+                  </div>
+                  <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 border border-black shadow-inner" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500 border border-black shadow-inner" />
+                  </div>
+                  <div className="absolute inset-0 border-8 border-black/40 pointer-events-none z-10 rounded-xl" />
+                </>
+              )}
+              
+              <div className={`absolute inset-0 pointer-events-none z-10 transition-colors ${showGameMode ? 'scanline-overlay opacity-30' : 'bg-yellow-500/5 group-hover:bg-yellow-500/10'}`} />
+              
               <Canvas camera={{ position: [0, 2, 8], fov: 45 }}>
                 <ambientLight intensity={0.5} />
                 <spotLight position={[5, 10, 5]} intensity={2} angle={0.3} penumbra={1} color="#fbbf24" />

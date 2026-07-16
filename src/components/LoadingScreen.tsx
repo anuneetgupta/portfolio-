@@ -3,46 +3,105 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGameStore } from "@/lib/gameStore";
+
+/*
+  LoadingScreen — Phase 2 polish
+  
+  Changes:
+  - "Skip to Portfolio →" link is ALWAYS visible from the first frame
+  - Extended boot text: "INITIALIZING TRAINER PROFILE..." → "LOADING ANUNEET.EXE..."
+  - Skips entirely if returning visitor already has a starter selected
+*/
 
 export default function LoadingScreen() {
   const [progress, setProgress]   = useState(0);
-  const [done,     setDone]       = useState(false);
+  const [phase,    setPhase]      = useState<"boot" | "done">("boot");
   const [hidden,   setHidden]     = useState(false);
+  const [lines,    setLines]      = useState<string[]>([]);
+
+  const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
+
+  // Returning visitor: skip the loading screen entirely
+  useEffect(() => {
+    if (hasSelectedStarter) {
+      setHidden(true);
+    }
+  }, [hasSelectedStarter]);
+
+  // Boot text lines
+  const BOOT_LINES = [
+    "POKEMON PORTFOLIO v2.0",
+    "=======================",
+    "",
+    "> INITIALIZING TRAINER PROFILE...",
+    "> LOADING ANUNEET.EXE...",
+    "> Mounting computer vision core... OK",
+    "> Connecting NLP pipeline......... OK",
+    "> Deploying full-stack engine..... OK",
+    "> System Ready.",
+  ];
 
   useEffect(() => {
-    // Simulate load progress
+    if (hasSelectedStarter) return; // Don't animate for returning visitors
+    if (phase !== "boot") return;
+
+    let lineIdx = 0;
+    let currentLines: string[] = [];
+
+    const tick = () => {
+      if (lineIdx < BOOT_LINES.length) {
+        currentLines = [...currentLines, BOOT_LINES[lineIdx]];
+        setLines([...currentLines]);
+        lineIdx++;
+        setTimeout(tick, lineIdx < 3 ? 120 : 200 + Math.random() * 100);
+      }
+    };
+
+    const t = setTimeout(tick, 150);
+    return () => clearTimeout(t);
+  }, [phase, hasSelectedStarter]);
+
+  // Progress bar animation (independent of boot text)
+  useEffect(() => {
+    if (hasSelectedStarter) return;
     const steps = [15, 35, 55, 70, 85, 95, 100];
     let i = 0;
     const tick = () => {
       if (i < steps.length) {
         setProgress(steps[i]);
         i++;
-        setTimeout(tick, 200 + Math.random() * 150);
+        setTimeout(tick, 250 + Math.random() * 150);
       } else {
         setTimeout(() => {
-          setDone(true);
-          setTimeout(() => setHidden(true), 700);
-        }, 300);
+          setPhase("done");
+          setTimeout(() => setHidden(true), 600);
+        }, 400);
       }
     };
-    const t = setTimeout(tick, 150);
+    const t = setTimeout(tick, 200);
     return () => clearTimeout(t);
-  }, []);
+  }, [hasSelectedStarter]);
+
+  const handleSkip = () => {
+    setPhase("done");
+    setTimeout(() => setHidden(true), 300);
+  };
 
   if (hidden) return null;
 
   return (
     <AnimatePresence>
-      {!done && (
+      {phase === "boot" && (
         <motion.div
           key="loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.04 }}
-          transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+          exit={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
           className="fixed inset-0 z-[998] bg-black flex flex-col items-center justify-center overflow-hidden"
         >
           {/* Scanline overlay */}
-          <div className="scanline-overlay absolute inset-0 z-50" />
+          <div className="scanline-overlay absolute inset-0 z-50 pointer-events-none" />
 
           {/* Grid overlay */}
           <div
@@ -59,51 +118,32 @@ export default function LoadingScreen() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-600/8 rounded-full blur-[100px]" />
           </div>
 
-          {/* Retro boot logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-            className="flex flex-col items-center gap-5 mb-12"
+          {/* ── ALWAYS-VISIBLE Skip button ── */}
+          <button
+            onClick={handleSkip}
+            className="absolute top-6 right-6 z-[60] text-xs text-gray-500 hover:text-gray-300 transition-colors border border-gray-800 hover:border-gray-600 px-4 py-2 rounded-full bg-black/40 backdrop-blur-sm"
+            aria-label="Skip loading screen and go to portfolio"
           >
-            {/* Pixel-style logo box */}
-            <div className="relative">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="absolute -inset-3 rounded-full border border-blue-500/20"
-              />
-              <div
-                className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.5)]"
-                style={{ imageRendering: "pixelated" }}
-              >
-                <span className="text-2xl">⚡</span>
-              </div>
-            </div>
+            Skip to Portfolio →
+          </button>
 
-            <div className="text-center">
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-xl font-bold tracking-[0.3em] text-white"
-                style={{ fontFamily: "var(--font-pixel), monospace", fontSize: "14px" }}
-              >
-                ANUNEET<span className="text-blue-400">.</span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-[10px] text-gray-500 tracking-[0.2em] uppercase mt-2"
-                style={{ fontFamily: "var(--font-pixel), monospace" }}
-              >
-                AI/ML Engineer
-              </motion.p>
-            </div>
+          {/* Boot terminal */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-xl px-8 mb-10"
+          >
+            <pre
+              className="text-green-400 text-xs sm:text-sm font-mono leading-relaxed whitespace-pre-wrap"
+              style={{ textShadow: "0 0 8px rgba(34,197,94,0.5)" }}
+            >
+              {lines.join("\n")}
+              <span className="inline-block w-2 h-4 bg-green-400 ml-0.5 animate-pulse" />
+            </pre>
           </motion.div>
 
-          {/* Progress section — retro terminal style */}
+          {/* Progress bar */}
           <div className="w-56 space-y-2">
             <div className="h-2 bg-gray-900 rounded-sm overflow-hidden border border-gray-800">
               <motion.div
@@ -127,6 +167,21 @@ export default function LoadingScreen() {
               </span>
             </div>
           </div>
+
+          {/* PRESS START prompt — appears after boot lines complete */}
+          <AnimatePresence>
+            {lines.length >= BOOT_LINES.filter(l => l !== "").length && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity, delay: 0.5 }}
+                className="absolute bottom-12 text-[11px] text-gray-400 tracking-[0.3em] uppercase"
+                style={{ fontFamily: "var(--font-pixel), monospace" }}
+              >
+                — PRESS START —
+              </motion.p>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>

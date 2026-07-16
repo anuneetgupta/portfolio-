@@ -63,11 +63,11 @@ function TypewriterRole() {
 
 export default function Hero() {
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
   const addXP = useGameStore((s) => s.addXP);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   return (
     <section className="relative w-full min-h-screen flex flex-col items-center justify-center pt-24 overflow-hidden text-white">
@@ -103,7 +103,16 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/30 border border-blue-700/40 text-blue-300 text-sm font-medium"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border"
+              style={showGameMode ? {
+                background: `${accentColors.primary}20`,
+                borderColor: `${accentColors.primary}40`,
+                color: accentColors.primaryLight
+              } : {
+                background: "rgba(30,58,138,0.3)",
+                borderColor: "rgba(29,78,216,0.4)",
+                color: "#93c5fd"
+              }}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
               Open to opportunities · Kanpur, India
@@ -115,7 +124,7 @@ export default function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.35 }}
-                className="font-semibold tracking-widest uppercase text-sm md:text-base"
+                className={`font-semibold tracking-widest uppercase text-sm md:text-base ${showGameMode ? 'animate-text-glow' : ''}`}
                 style={{ color: showGameMode ? accentColors.primaryLight : "#60a5fa" }}
               >
                 Building AI Products That Solve Real Problems
@@ -124,11 +133,11 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.7 }}
-                className="text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent"
+                className={`text-5xl md:text-7xl font-bold tracking-tight bg-clip-text text-transparent ${showGameMode ? 'animate-gradient-shift' : ''}`}
                 style={{
                   backgroundImage: showGameMode
-                    ? `linear-gradient(to right, #fff, ${accentColors.primaryLight}, ${accentColors.primary})`
-                    : "linear-gradient(to right, #fff, #bfdbfe, #60a5fa)",
+                    ? `linear-gradient(to right, #fff, ${accentColors.primaryLight}, ${accentColors.primary}, #fff)`
+                    : "linear-gradient(to right, #fff, #bfdbfe, #60a5fa, #fff)",
                 }}
               >
                 ANUNEET GUPTA

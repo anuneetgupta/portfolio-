@@ -1,6 +1,7 @@
 /* eslint-disable */
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Clock, ArrowUpRight, Code, Cpu, ExternalLink } from "lucide-react";
 import { useGameStore } from "@/lib/gameStore";
@@ -51,11 +52,13 @@ const posts = [
 ];
 
 export default function Blog() {
+  const [selectedPost, setSelectedPost] = useState<typeof posts[0] | null>(null);
+
   const accentColors = useGameStore((s) => s.accentColors);
-  const pokedexMode = useGameStore((s) => s.pokedexMode);
+  const plainMode = useGameStore((s) => s.plainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
 
-  const showGameMode = hasSelectedStarter && !pokedexMode;
+  const showGameMode = hasSelectedStarter && !plainMode;
 
   return (
     <section className="relative w-full py-32 px-6 z-10 text-white border-t border-gray-900 bg-black">
@@ -97,9 +100,9 @@ export default function Blog() {
           {posts.map((post, i) => {
             const Icon = post.icon;
             return (
-              <motion.a
-                href={post.href}
+              <motion.div
                 key={post.id}
+                onClick={() => setSelectedPost(post)}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -147,7 +150,7 @@ export default function Blog() {
                     </div>
                   </div>
                 </div>
-              </motion.a>
+              </motion.div>
             );
           })}
         </div>
@@ -176,6 +179,48 @@ export default function Blog() {
         </motion.div>
 
       </div>
+
+      {/* Modal Reader */}
+      {selectedPost && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm" onClick={() => setSelectedPost(null)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
+            className={`w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-3xl bg-gray-950 border p-8 md:p-12 relative ${showGameMode ? 'game-border' : 'border-gray-800'}`}
+          >
+            <button
+              onClick={() => setSelectedPost(null)}
+              className="absolute top-6 right-6 p-2 rounded-full bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            
+            <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
+              <span className="text-white">{selectedPost.date}</span>
+              <span>•</span>
+              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {selectedPost.readTime}</span>
+              <span>•</span>
+              <span className="uppercase tracking-wider">{selectedPost.category}</span>
+            </div>
+            
+            <h3 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">{selectedPost.title}</h3>
+            
+            <div className="prose prose-invert prose-blue max-w-none">
+              <p className="text-xl text-gray-300 leading-relaxed mb-8">{selectedPost.excerpt}</p>
+              
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center space-y-4">
+                <selectedPost.icon className="w-12 h-12 text-blue-400 opacity-50" />
+                <div>
+                  <h4 className="text-lg font-bold text-white mb-1">Full Article Coming Soon</h4>
+                  <p className="text-gray-400 text-sm">This is a placeholder for the modal reader. The full content will be added in a future update.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 }
