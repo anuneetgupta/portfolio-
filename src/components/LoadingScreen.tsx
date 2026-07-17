@@ -19,15 +19,22 @@ export default function LoadingScreen() {
   const [phase,    setPhase]      = useState<"boot" | "done">("boot");
   const [hidden,   setHidden]     = useState(false);
   const [lines,    setLines]      = useState<string[]>([]);
+  const [mounted,  setMounted]    = useState(false);
 
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
 
+  // Only run after hydration is complete
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Returning visitor: skip the loading screen entirely
   useEffect(() => {
+    if (!mounted) return;
     if (hasSelectedStarter) {
       setHidden(true);
     }
-  }, [hasSelectedStarter]);
+  }, [hasSelectedStarter, mounted]);
 
   // Boot text lines
   const BOOT_LINES = [
@@ -43,6 +50,7 @@ export default function LoadingScreen() {
   ];
 
   useEffect(() => {
+    if (!mounted) return;
     if (hasSelectedStarter) return; // Don't animate for returning visitors
     if (phase !== "boot") return;
 
@@ -60,10 +68,11 @@ export default function LoadingScreen() {
 
     const t = setTimeout(tick, 150);
     return () => clearTimeout(t);
-  }, [phase, hasSelectedStarter]);
+  }, [phase, hasSelectedStarter, mounted]);
 
   // Progress bar animation (independent of boot text)
   useEffect(() => {
+    if (!mounted) return;
     if (hasSelectedStarter) return;
     const steps = [15, 35, 55, 70, 85, 95, 100];
     let i = 0;
@@ -81,13 +90,15 @@ export default function LoadingScreen() {
     };
     const t = setTimeout(tick, 200);
     return () => clearTimeout(t);
-  }, [hasSelectedStarter]);
+  }, [hasSelectedStarter, mounted]);
 
   const handleSkip = () => {
     setPhase("done");
     setTimeout(() => setHidden(true), 300);
   };
 
+  if (!mounted) return null;
+  
   if (hidden) return null;
 
   return (

@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 /* ── Types ── */
-export type StarterType = "vision" | "lexis" | "flowchain";
+export type StarterType = "charmander" | "squirtle" | "bulbasaur" | "pikachu";
 export type EvolutionStage = 1 | 2 | 3 | "shiny";
 
 export interface AccentColors {
@@ -18,15 +18,23 @@ export interface AccentColors {
 
 /* ── Accent color palettes per starter ── */
 const ACCENT_MAP: Record<StarterType, AccentColors> = {
-  vision: {
-    primary: "#ef4444",
-    primaryLight: "#f87171",
-    glow: "rgba(239,68,68,0.4)",
-    bg: "rgba(239,68,68,0.1)",
-    border: "rgba(239,68,68,0.3)",
-    gradient: "linear-gradient(135deg, #ef4444, #f97316)",
+  charmander: {
+    primary: "#ea580c",
+    primaryLight: "#fb923c",
+    glow: "rgba(234,88,12,0.4)",
+    bg: "rgba(234,88,12,0.1)",
+    border: "rgba(234,88,12,0.3)",
+    gradient: "linear-gradient(135deg, #ea580c, #f97316)",
   },
-  lexis: {
+  squirtle: {
+    primary: "#0369a1",
+    primaryLight: "#0284c7",
+    glow: "rgba(3,105,161,0.4)",
+    bg: "rgba(3,105,161,0.1)",
+    border: "rgba(3,105,161,0.3)",
+    gradient: "linear-gradient(135deg, #0369a1, #0284c7)",
+  },
+  bulbasaur: {
     primary: "#22c55e",
     primaryLight: "#4ade80",
     glow: "rgba(34,197,94,0.4)",
@@ -34,18 +42,18 @@ const ACCENT_MAP: Record<StarterType, AccentColors> = {
     border: "rgba(34,197,94,0.3)",
     gradient: "linear-gradient(135deg, #22c55e, #16a34a)",
   },
-  flowchain: {
-    primary: "#3b82f6",
-    primaryLight: "#60a5fa",
-    glow: "rgba(59,130,246,0.4)",
-    bg: "rgba(59,130,246,0.1)",
-    border: "rgba(59,130,246,0.3)",
-    gradient: "linear-gradient(135deg, #3b82f6, #2563eb)",
+  pikachu: {
+    primary: "#fbbf24",
+    primaryLight: "#fcd34d",
+    glow: "rgba(251,191,36,0.4)",
+    bg: "rgba(251,191,36,0.1)",
+    border: "rgba(251,191,36,0.3)",
+    gradient: "linear-gradient(135deg, #fbbf24, #facc15)",
   },
 };
 
-/* ── Default accent (blue, matches existing site) ── */
-const DEFAULT_ACCENT: AccentColors = ACCENT_MAP.flowchain;
+/* ── Default accent (gold Pikachu, represents full-stack) ── */
+const DEFAULT_ACCENT: AccentColors = ACCENT_MAP.pikachu;
 
 /* ── XP thresholds ── */
 export const XP_THRESHOLDS = {
@@ -183,6 +191,17 @@ export const useGameStore = create<GameState>()(
         plainMode: state.plainMode,
         accentColors: state.accentColors,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Validate starter after rehydration from localStorage
+        if (state) {
+          const validStarters = ["charmander", "squirtle", "bulbasaur", "pikachu"];
+          if (state.starter && !validStarters.includes(state.starter)) {
+            console.warn(`[Zustand] Invalid starter "${state.starter}" in localStorage. Resetting to null.`);
+            state.starter = null;
+            state.hasSelectedStarter = false;
+          }
+        }
+      },
     }
   )
 );

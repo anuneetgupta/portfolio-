@@ -29,21 +29,21 @@ const STARTERS: {
   bgGradient: string;
 }[] = [
   {
-    type: "vision",
-    name: "Vision",
+    type: "charmander",
+    name: "Charmander",
     label: "Fire Type",
-    description: "Computer Vision specialist. Sees patterns in pixels, detects faces, tracks gazes.",
+    description: "Computer Vision specialist. Detects objects, recognizes faces, tracks motion in pixels.",
     specialty: "Computer Vision",
     typeIcon: "🔥",
-    color: "#ef4444",
-    colorLight: "#fca5a5",
-    bgGradient: "from-red-900/40 to-orange-900/30",
+    color: "#ea580c",
+    colorLight: "#fb923c",
+    bgGradient: "from-orange-900/40 to-red-900/30",
   },
   {
-    type: "lexis",
-    name: "Lexis",
+    type: "bulbasaur",
+    name: "Bulbasaur",
     label: "Grass Type",
-    description: "NLP & LLM specialist. Processes language, generates wisdom, maps knowledge.",
+    description: "NLP & LLM specialist. Understands language, generates insights, processes knowledge.",
     specialty: "NLP / LLMs",
     typeIcon: "🌿",
     color: "#22c55e",
@@ -51,15 +51,26 @@ const STARTERS: {
     bgGradient: "from-green-900/40 to-emerald-900/30",
   },
   {
-    type: "flowchain",
-    name: "Flowchain",
+    type: "squirtle",
+    name: "Squirtle",
     label: "Water Type",
-    description: "Full-stack & Deployment specialist. Flows from backend to frontend, ships to production.",
-    specialty: "Full-stack / Deploy",
+    description: "Full-Stack & Deployment expert. Flows from backend to frontend, ships to production.",
+    specialty: "Full-Stack / Deploy",
     typeIcon: "💧",
-    color: "#3b82f6",
-    colorLight: "#93c5fd",
-    bgGradient: "from-blue-900/40 to-indigo-900/30",
+    color: "#0369a1",
+    colorLight: "#38bdf8",
+    bgGradient: "from-cyan-900/40 to-blue-900/30",
+  },
+  {
+    type: "pikachu",
+    name: "Pikachu",
+    label: "Electric Type",
+    description: "⚡ MASTER OF ALL SKILLS ⚡ Computer Vision + NLP + Full-Stack. The complete package.",
+    specialty: "All-Around Master",
+    typeIcon: "⚡",
+    color: "#fbbf24",
+    colorLight: "#fcd34d",
+    bgGradient: "from-yellow-900/40 to-amber-900/30",
   },
 ];
 
@@ -168,7 +179,7 @@ export default function StarterSelection() {
   // Handle skip / resume (always available)
   const handleSkipOrResume = () => {
     const currentStarter = useGameStore.getState().starter;
-    const starterToUse: StarterType = (hasSelectedStarter && currentStarter) ? currentStarter : "flowchain";
+    const starterToUse: StarterType = (hasSelectedStarter && currentStarter) ? currentStarter : "pikachu";
     if (!hasSelectedStarter) {
       selectStarter(starterToUse);
     }
@@ -272,7 +283,7 @@ export default function StarterSelection() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
                 {STARTERS.map((s) => (
                   <motion.button
                     key={s.type}

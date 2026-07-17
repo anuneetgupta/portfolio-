@@ -6,9 +6,6 @@ import dynamic from "next/dynamic";
 import Navbar          from "@/components/Navbar";
 import Footer          from "@/components/Footer";
 import BackToTop       from "@/components/BackToTop";
-import LoadingScreen   from "@/components/LoadingScreen";
-import CustomCursor    from "@/components/CustomCursor";
-import CommandPalette  from "@/components/CommandPalette";
 import SmoothScroll    from "@/components/SmoothScroll";
 import Scene           from "@/components/3d/Scene";
 import Hero            from "@/components/sections/Hero";
@@ -26,6 +23,11 @@ const StarterSelection = dynamic(() => import("@/components/game/StarterSelectio
 const GameHUD          = dynamic(() => import("@/components/game/GameHUD"), { ssr: false });
 const EvolutionOverlay = dynamic(() => import("@/components/game/EvolutionOverlay"), { ssr: false });
 const RouteMap         = dynamic(() => import("@/components/game/RouteMap"), { ssr: false });
+
+// Client-only components (to prevent hydration mismatches)
+const LoadingScreenDynamic = dynamic(() => import("@/components/LoadingScreen"), { ssr: false });
+const CustomCursorDynamic  = dynamic(() => import("@/components/CustomCursor"), { ssr: false });
+const CommandPaletteDynamic = dynamic(() => import("@/components/CommandPalette"), { ssr: false });
 
 import { useGameStore } from "@/lib/gameStore";
 
@@ -79,15 +81,32 @@ function SectionXPTracker() {
 }
 
 export default function Home() {
+  // Suppress fdprocessedid hydration warnings from browser extensions (development only)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const originalError = console.error;
+      console.error = function(...args) {
+        // Suppress fdprocessedid hydration mismatch warnings (caused by browser extensions like Grammarly)
+        if (
+          args[0]?.toString?.().includes('A tree hydrated') &&
+          args[0]?.toString?.().includes('fdprocessedid')
+        ) {
+          return;
+        }
+        originalError.apply(console, args);
+      };
+    }
+  }, []);
+
   return (
     <>
       {/* Game entry gate */}
       <StarterSelection />
 
       {/* Phase 6: Loading screen + cursor (outside scroll wrapper) */}
-      <LoadingScreen />
-      <CustomCursor />
-      <CommandPalette />
+      <LoadingScreenDynamic />
+      <CustomCursorDynamic />
+      <CommandPaletteDynamic />
 
       <SmoothScroll>
         <main className="min-h-screen bg-black text-white overflow-hidden">

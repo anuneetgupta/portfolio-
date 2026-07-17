@@ -29,9 +29,29 @@ export default function GameHUD() {
   const [collapsed, setCollapsed] = useState(false);
   const [showBonus, setShowBonus] = useState(false);
   const [prevXP, setPrevXP] = useState(xp);
+  const [mounted, setMounted] = useState(false);
 
-  // Don't render if no starter selected or in Plain Mode
-  if (!hasSelectedStarter || !starter || plainMode) return null;
+  // Only render after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Debug: log the starter value
+  useEffect(() => {
+    if (!mounted && starter) {
+      console.log(`[GameHUD] Before mount, starter = "${starter}"`);
+    }
+  }, [starter, mounted]);
+
+  // Don't render if no starter selected or in Plain Mode or not mounted
+  // Also add extra safety check for starter value
+  if (!mounted || !hasSelectedStarter || !starter || plainMode) return null;
+  
+  const validStarters = ["charmander", "squirtle", "bulbasaur", "pikachu"];
+  if (!validStarters.includes(starter)) {
+    console.warn(`GameHUD: Invalid starter "${starter}". Not rendering HUD.`);
+    return null;
+  }
 
   const { next, label } = getXPForNextStage(xp);
   const stageLabel = getStageLabel(evolutionStage);
