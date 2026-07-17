@@ -174,8 +174,22 @@ export default function Hero() {
               </button>
               <a
                 href="/resume.pdf"
-                download
-                onClick={() => addXP(25, "download-resume")}
+                download="AnuneetGupta_Resume.pdf"
+                onClick={(e) => {
+                  addXP(25, "download-resume");
+                  // Fallback to API route if direct download fails
+                  if (!navigator.userAgent.includes("Firefox")) {
+                    setTimeout(() => {
+                      const apiLink = document.createElement("a");
+                      apiLink.href = "/api/download-resume";
+                      apiLink.download = "AnuneetGupta_Resume.pdf";
+                      apiLink.style.display = "none";
+                      document.body.appendChild(apiLink);
+                      apiLink.click();
+                      document.body.removeChild(apiLink);
+                    }, 100);
+                  }
+                }}
                 className="px-8 py-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all font-medium flex items-center gap-2 group border border-white/10"
               >
                 <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
