@@ -68,7 +68,7 @@ export default function Footer() {
               <GitBranch className="w-5 h-5" />
             </a>
             <a
-              href="https://linkedin.com/in/anuneet-gupta"
+              href="https://www.linkedin.com/in/anuneet-gupta-57898631a?utm_source=share_via&utm_content=profile&utm_medium=member_android"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/50 transition-all"

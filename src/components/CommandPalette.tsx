@@ -31,7 +31,7 @@ const COMMANDS = [
     icon: ArrowUpRight,
     section: "Links",
     shortcut: null,
-    href: "https://linkedin.com/in/anuneet-gupta",
+    href: "https://www.linkedin.com/in/anuneet-gupta-57898631a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
   },
   {
     id: "resume",

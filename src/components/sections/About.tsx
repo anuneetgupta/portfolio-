@@ -192,7 +192,7 @@ export default function About() {
                     <GitBranch className="w-4 h-4 text-gray-300" />
                   </a>
                   <a
-                    href="https://linkedin.com/in/anuneet-gupta"
+                    href="https://www.linkedin.com/in/anuneet-gupta-57898631a?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`p-2.5 transition-all flex items-center justify-center ${showGameMode ? 'rounded-md border-2 border-gray-700 bg-black hover:border-[#0A66C2]' : 'rounded-xl bg-gray-800 border border-gray-700 text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/50'}`}

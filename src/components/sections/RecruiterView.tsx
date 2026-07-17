@@ -78,7 +78,7 @@ function QuickSummaryPanel({ onClose }: { onClose: () => void }) {
                 Download Resume
               </a>
               <a
-                href="https://linkedin.com/in/anuneet-gupta"
+                href="https://www.linkedin.com/in/anuneet-gupta-57898631a?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 bg-[#0A66C2] text-white font-semibold rounded-xl hover:bg-[#004182] transition-colors flex items-center gap-2"

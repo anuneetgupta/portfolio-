@@ -305,7 +305,7 @@ export default function Contact() {
                 <GitBranch className="w-5 h-5" /> GitHub
               </a>
               <a
-                href="https://linkedin.com/in/anuneet-gupta"
+                href="https://www.linkedin.com/in/anuneet-gupta-57898631a?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/50 transition-all font-medium text-sm"
