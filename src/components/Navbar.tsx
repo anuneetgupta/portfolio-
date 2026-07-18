@@ -27,6 +27,7 @@ export default function Navbar() {
   const accentColors = useGameStore((s) => s.accentColors);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
   const setIsMapOpen = useGameStore((s) => s.setIsMapOpen);
+  const setIsSummaryOpen = useGameStore((s) => s.setIsSummaryOpen);
 
   // Scroll progress bar
   const { scrollYProgress } = useScroll();
@@ -185,16 +186,16 @@ export default function Navbar() {
               </button>
             )}
 
-            <a
-              href="mailto:guptaanuneet10june@gmail.com"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-xl transition-all"
+            <button
+              onClick={() => setIsSummaryOpen(true)}
+              className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-xl transition-all hover:scale-105"
               style={{
                 background: showGameMode ? accentColors.primary : "#2563eb",
                 boxShadow: `0 0 20px ${showGameMode ? accentColors.glow : "rgba(37,99,235,0.4)"}`,
               }}
             >
               Hire Me
-            </a>
+            </button>
             <button
               onClick={() => setMenuOpen((v) => !v)}
               className="md:hidden p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
@@ -275,13 +276,16 @@ export default function Navbar() {
                 )}
 
                 <li className="px-4 pb-3 pt-1">
-                  <a
-                    href="mailto:guptaanuneet10june@gmail.com"
-                    className="flex items-center justify-center gap-2 w-full py-3 text-white text-sm font-semibold rounded-xl transition-colors"
+                  <button
+                    onClick={() => {
+                      setIsSummaryOpen(true);
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-3 text-white text-sm font-semibold rounded-xl transition-colors hover:scale-[1.02]"
                     style={{ background: showGameMode ? accentColors.primary : "#2563eb" }}
                   >
                     Hire Me
-                  </a>
+                  </button>
                 </li>
               </ul>
             </motion.div>

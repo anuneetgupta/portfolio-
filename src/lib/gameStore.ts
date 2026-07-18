@@ -89,6 +89,7 @@ interface GameState {
   /* Mode — plainMode=true strips all game chrome for a clean recruiter layout */
   plainMode: boolean;
   isMapOpen: boolean;
+  isSummaryOpen: boolean;
 
   /* Derived */
   accentColors: AccentColors;
@@ -100,6 +101,7 @@ interface GameState {
   togglePlainMode: () => void;
   setIsEvolving: (v: boolean) => void;
   setIsMapOpen: (v: boolean) => void;
+  setIsSummaryOpen: (v: boolean) => void;
   resetGame: () => void;
 }
 
@@ -117,6 +119,7 @@ export const useGameStore = create<GameState>()(
       xpSources: [],
       plainMode: false,
       isMapOpen: false,
+      isSummaryOpen: false,
       accentColors: DEFAULT_ACCENT,
 
       /* ── Actions ── */
@@ -163,6 +166,8 @@ export const useGameStore = create<GameState>()(
       
       setIsMapOpen: (v) => set({ isMapOpen: v }),
 
+      setIsSummaryOpen: (v) => set({ isSummaryOpen: v }),
+
       resetGame: () =>
         set({
           starter: null,
@@ -174,6 +179,7 @@ export const useGameStore = create<GameState>()(
           visitedSections: [],
           xpSources: [],
           plainMode: false,
+          isSummaryOpen: false,
           accentColors: DEFAULT_ACCENT,
         }),
     }),

@@ -393,6 +393,153 @@ export default function Projects() {
           </div>
         </motion.div>
 
+        {/* ── GYM LEADER 3: SAFARNAMA ── */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className={`grid lg:grid-cols-2 gap-12 items-center rounded-3xl p-8 lg:p-12 backdrop-blur-sm transition-colors group relative overflow-hidden ${
+            showGameMode ? "game-border" : "bg-gray-900/40 border border-gray-800 hover:border-yellow-500/20"
+          }`}
+        >
+          {/* Game mode: scanline overlay */}
+          {showGameMode && <div className="scanline-overlay absolute inset-0 z-0 opacity-30" />}
+
+          <div className="space-y-8 relative z-10">
+            <div>
+              {showGameMode && (
+                <div className="flex items-center gap-3 mb-3">
+                  <GymBadge
+                    label="Explorer Badge"
+                    icon="🏕️"
+                    colors={{ ...accentColors, primary: "#a3e635", primaryLight: "#bef264" }}
+                    size={48}
+                  />
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                      Gym Leader Battle #3
+                    </span>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-red-900/50 border border-red-700 text-red-400 text-xs font-bold italic" style={{ fontFamily: "var(--font-pixel), monospace" }}>VS</span>
+                      <span className="text-white font-bold tracking-widest uppercase">Leader Safarnama</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="inline-block px-4 py-2 rounded-full bg-yellow-900/30 border border-yellow-800 text-yellow-300 text-sm font-semibold tracking-wider uppercase mb-4">
+                🗺️ Student Travel Platform
+              </div>
+              <h3 className="text-5xl font-bold mb-4 text-white">SAFARNAMA</h3>
+              <p className="text-xl text-gray-400 leading-relaxed">
+                A digital gateway to high-energy travel tailored for students. Join the tribe, explore curated destinations, and create lifelong memories with features like real-time updates and group tracking.
+              </p>
+            </div>
+
+            {/* Stats */}
+            {showGameMode ? (
+              <div className="space-y-2.5 p-4 rounded-xl bg-black/40 border border-gray-800">
+                <StatBar label="ATK" value="1,000+ Users" max={92} color="#a3e635" icon={Users} />
+                <StatBar label="DEF" value="Safe & Verified" max={88} color="#3b82f6" icon={Shield} />
+                <StatBar label="SPD" value="Real-Time Updates" max={95} color="#f59e0b" icon={Gauge} />
+                <StatBar label="HP" value="Production Live" max={100} color="#ef4444" icon={Heart} />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="text-sm uppercase text-gray-500 font-bold tracking-wider">Core Features</h4>
+                  <ul className="text-gray-300 space-y-1.5 text-sm">
+                    {["Curated Itineraries", "Group Coordination", "Verified Stays", "Live Trip Tracking", "Exclusive Deals"].map(f => (
+                      <li key={f} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <div className="p-3 rounded-xl bg-green-900/20 border border-green-700/30 flex items-center gap-3">
+                    <Users className="w-5 h-5 text-green-400 shrink-0" />
+                    <div>
+                      <div className="font-bold text-white text-sm">1,000+</div>
+                      <div className="text-xs text-gray-500">Happy Travelers</div>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-blue-900/20 border border-blue-700/30 flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-blue-400 shrink-0" />
+                    <div>
+                      <div className="font-bold text-white text-sm">Verified</div>
+                      <div className="text-xs text-gray-500">Safe & Secure</div>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-yellow-900/20 border border-yellow-700/30 flex items-center gap-3">
+                    <Heart className="w-5 h-5 text-yellow-400 shrink-0" />
+                    <div>
+                      <div className="font-bold text-white text-sm">4.9★</div>
+                      <div className="text-xs text-gray-500">Average Rating</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tech Stack */}
+            <div>
+              <h4 className="text-xs uppercase text-gray-500 font-bold tracking-wider mb-3">
+                {showGameMode ? "Move Set" : "Tech Stack"}
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {['Next.js', 'React', 'Tailwind CSS', 'Vercel', 'UI/UX Design'].map(t => (
+                  <span
+                    key={t}
+                    className="px-3 py-1 text-xs rounded-lg border text-gray-300"
+                    style={showGameMode ? {
+                      background: `${accentColors.primary}10`,
+                      borderColor: accentColors.border,
+                    } : {
+                      background: "rgba(31,41,55,1)",
+                      borderColor: "rgba(55,65,81,1)",
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-4 pt-2">
+              <a
+                href="https://safarnama-khaki.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => addXP(15, "project-safarnama-live")}
+                className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              >
+                <ExternalLink className="w-5 h-5" /> Visit Safarnama
+              </a>
+              <a
+                href="https://github.com/anuneetgupta"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => addXP(15, "project-safarnama-github")}
+                className="px-6 py-3 bg-gray-800 text-white font-semibold rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-2 border border-gray-700"
+              >
+                <GitBranch className="w-5 h-5" /> GitHub
+              </a>
+            </div>
+          </div>
+
+          {/* Visual Placeholder for Safarnama */}
+          <div className="relative w-full aspect-video rounded-2xl bg-gradient-to-br from-yellow-900/20 to-gray-900 border border-yellow-800/30 flex flex-col items-center justify-center overflow-hidden cursor-pointer group/vid z-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-600/5 to-emerald-600/5 group-hover/vid:from-yellow-600/10 group-hover/vid:to-emerald-600/10 transition-all duration-500" />
+            <div className="absolute inset-0 opacity-10"
+              style={{ backgroundImage: "linear-gradient(rgba(163,230,53,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(163,230,53,0.3) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
+            />
+            <ExternalLink className="w-16 h-16 text-yellow-400/60 group-hover/vid:text-yellow-400 group-hover/vid:scale-110 transition-all z-10" />
+            <p className="mt-4 text-gray-500 font-medium z-10 text-sm">Explore the Platform</p>
+          </div>
+        </motion.div>
+
         {/* ── WILD ENCOUNTERS (ML & CV Pipelines) ── */}
         <div className="space-y-10">
           <motion.div

@@ -4,7 +4,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Gamepad2, X, Download, ExternalLink, GitBranch, Mail, MapPin, GraduationCap, Cpu, Brain, Code, Award } from "lucide-react";
 import { useGameStore } from "@/lib/gameStore";
-import { useState } from "react";
 
 /*
   RecruiterView — Phase 1 repurpose:
@@ -239,7 +238,8 @@ function QuickSummaryPanel({ onClose }: { onClose: () => void }) {
 }
 
 export default function RecruiterView() {
-  const [summaryOpen, setSummaryOpen] = useState(false);
+  const isSummaryOpen = useGameStore((s) => s.isSummaryOpen);
+  const setIsSummaryOpen = useGameStore((s) => s.setIsSummaryOpen);
   const plainMode = useGameStore((s) => s.plainMode);
   const togglePlainMode = useGameStore((s) => s.togglePlainMode);
   const hasSelectedStarter = useGameStore((s) => s.hasSelectedStarter);
@@ -294,7 +294,7 @@ export default function RecruiterView() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.5, duration: 0.5 }}
-        onClick={() => setSummaryOpen(true)}
+        onClick={() => setIsSummaryOpen(true)}
         className="fixed bottom-16 right-6 z-50 px-3 py-1.5 rounded-full text-xs font-semibold text-gray-500 hover:text-gray-300 border border-gray-800 hover:border-gray-600 bg-black/60 backdrop-blur-sm transition-all"
         aria-label="Open 30-second summary panel"
       >
@@ -303,7 +303,7 @@ export default function RecruiterView() {
 
       {/* ── Quick Summary Panel ── */}
       <AnimatePresence>
-        {summaryOpen && <QuickSummaryPanel onClose={() => setSummaryOpen(false)} />}
+        {isSummaryOpen && <QuickSummaryPanel onClose={() => setIsSummaryOpen(false)} />}
       </AnimatePresence>
     </>
   );

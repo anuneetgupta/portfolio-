@@ -54,8 +54,10 @@ function TrophyModel() {
 
 const CERTIFICATES = [
   { title: "Ideathon Winner 2026", org: "CSJMUIF Innovation Foundation", color: "border-yellow-500/40 bg-yellow-900/10 text-yellow-400", gameLabel: "TM01" },
-  { title: "Python for Data Science", org: "Online Certification", color: "border-blue-500/40 bg-blue-900/10 text-blue-400", gameLabel: "TM02" },
-  { title: "Machine Learning Fundamentals", org: "Coursera / NPTEL", color: "border-purple-500/40 bg-purple-900/10 text-purple-400", gameLabel: "HM01" },
+  { title: "Evolothon Finalist Certificate", org: "Evolotek", color: "border-indigo-500/40 bg-indigo-900/10 text-indigo-400", gameLabel: "TM02" },
+  { title: "Learn Python Certification", org: "Geekster", color: "border-green-500/40 bg-green-900/10 text-green-400", gameLabel: "TM03" },
+  { title: "ChatGPT Bootcamp", org: "LetsUpgrade & NSDC", color: "border-orange-500/40 bg-orange-900/10 text-orange-400", gameLabel: "TM04" },
+  { title: "TRIPS 2025 Summit", org: "IIT Kanpur", color: "border-red-500/40 bg-red-900/10 text-red-400", gameLabel: "HM01" },
 ];
 
 export default function Achievements() {
