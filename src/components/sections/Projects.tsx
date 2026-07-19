@@ -269,7 +269,7 @@ export default function Projects() {
           {/* Video Player */}
           <div className="relative w-full aspect-video rounded-2xl bg-black border border-blue-800/30 overflow-hidden z-10">
             <video
-              src="/videos/iqrp%20demo.mp4"
+              src="https://media.githubusercontent.com/media/anuneetgupta/portfolio-/main/public/videos/iqrp%20demo.mp4"
               autoPlay
               muted
               loop
@@ -294,7 +294,7 @@ export default function Projects() {
           {/* Video Player */}
           <div className="order-2 lg:order-1 relative w-full aspect-square md:aspect-video lg:aspect-square rounded-2xl bg-black border border-green-800/30 overflow-hidden z-10">
             <video
-              src="/videos/dharma%20setu%20demo%20.mp4"
+              src="https://media.githubusercontent.com/media/anuneetgupta/portfolio-/main/public/videos/dharma%20setu%20demo%20.mp4"
               autoPlay
               muted
               loop
