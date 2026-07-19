@@ -212,6 +212,39 @@ export const useGameStore = create<GameState>()(
   )
 );
 
+/* ── Evolution name map ── */
+export const EVOLUTION_NAMES: Record<StarterType, Record<1 | 2 | 3, string>> = {
+  charmander: { 1: "Charmander", 2: "Charmeleon", 3: "Charizard" },
+  squirtle:   { 1: "Squirtle",   2: "Wartortle",  3: "Blastoise" },
+  bulbasaur:  { 1: "Bulbasaur",  2: "Ivysaur",    3: "Venusaur" },
+  pikachu:    { 1: "Pikachu",    2: "Raichu",     3: "Raichu" },
+};
+
+/* ── Pokedex IDs for PokeAPI sprite URLs ── */
+const POKEDEX_IDS: Record<StarterType, Record<1 | 2 | 3, number>> = {
+  charmander: { 1: 4,  2: 5,  3: 6 },
+  squirtle:   { 1: 7,  2: 8,  3: 9 },
+  bulbasaur:  { 1: 1,  2: 2,  3: 3 },
+  pikachu:    { 1: 25, 2: 26, 3: 26 },
+};
+
+/* ── Helper: Get evolution name for a starter + stage ── */
+export function getEvolutionName(starter: StarterType, stage: EvolutionStage): string {
+  const numericStage = stage === "shiny" ? 3 : stage;
+  const names = EVOLUTION_NAMES[starter];
+  if (!names) return starter;
+  return names[numericStage] || starter;
+}
+
+/* ── Helper: Get Pokemon sprite URL from PokeAPI CDN ── */
+export function getPokemonSpriteUrl(starter: StarterType, stage: EvolutionStage): string {
+  const numericStage = stage === "shiny" ? 3 : stage;
+  const ids = POKEDEX_IDS[starter];
+  if (!ids) return "";
+  const id = ids[numericStage];
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+}
+
 /* ── Helper: XP needed for next evolution ── */
 export function getXPForNextStage(currentXP: number): { next: number; label: string } {
   if (currentXP >= XP_THRESHOLDS.shiny) return { next: XP_THRESHOLDS.shiny, label: "MAX" };

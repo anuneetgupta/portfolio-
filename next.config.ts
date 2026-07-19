@@ -4,6 +4,17 @@ const nextConfig: NextConfig = {
   /* config options here */
   // Ensure static files are properly served
   staticPageGenerationTimeout: 60,
+
+  // Allow remote images from PokeAPI sprite CDN
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+        pathname: "/PokeAPI/sprites/**",
+      },
+    ],
+  },
   
   // Headers for proper file serving and CORS
   async headers() {

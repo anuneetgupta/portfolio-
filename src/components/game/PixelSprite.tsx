@@ -1,229 +1,21 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
+import Image from "next/image";
 import type { StarterType, EvolutionStage } from "@/lib/gameStore";
+import { getPokemonSpriteUrl, getEvolutionName } from "@/lib/gameStore";
 
 /* ─────────────────────────────────────────────────────────
-   Pixel Sprite Component — Real Pokemon Edition
+   Pixel Sprite Component — Real Pokemon Artwork Edition
    
-   Renders CSS-based pixel art using a single <div> with
-   box-shadow for each pixel. Each of the 4 Pokemon has 
-   3 evolution stages + a shiny variant (adds sparkle overlay).
+   Renders official Pokemon artwork from PokeAPI CDN.
+   Each of the 4 Pokemon has 3 evolution stages + a shiny
+   variant (adds sparkle overlay + golden tint).
    
    Pokemon: Charmander, Squirtle, Bulbasaur, Pikachu
-   Grid: 12×12 px, each cell = {scale}px
+   Props are backwards-compatible with the old pixel version.
 ───────────────────────────────────────────────────────── */
 
-type PixelGrid = string[][];  // 12 rows × 12 cols, each cell = color or "" (transparent)
-
-const _ = ""; // transparent alias
-
-/* ── CHARMANDER (Fire Type / Computer Vision) ── */
-const CHARMANDER_STAGE_1: PixelGrid = [
-  [_,_,_,_,_,"#ea580c",_,_,_,_,_,_],
-  [_,_,_,_,"#ea580c","#ea580c","#ea580c",_,_,_,_,_],
-  [_,_,_,"#ea580c","#fff","#fff","#ea580c","#ea580c",_,_,_,_],
-  [_,_,"#ea580c","#ea580c","#000","#000","#ea580c","#ea580c","#ea580c",_,_,_],
-  [_,_,"#ea580c","#fff","#fff","#fff","#fff","#ea580c","#ea580c",_,_,_],
-  [_,_,_,"#fbbf24","#ea580c","#ea580c","#ea580c","#fbbf24",_,_,_,_],
-  [_,_,"#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c",_,_,_,_],
-  [_,"#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c",_,_,_],
-  [_,"#fbbf24",_,_,"#ea580c",_,_,"#ea580c",_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const CHARMANDER_STAGE_2: PixelGrid = [
-  [_,_,"#fbbf24",_,_,"#c2410c","#c2410c",_,_,_,_,_],
-  [_,_,"#fbbf24","#fbbf24","#ea580c","#ea580c","#ea580c","#c2410c",_,_,_,_],
-  [_,"#fbbf24","#fbbf24","#ea580c","#fff","#fff","#ea580c","#ea580c","#ea580c",_,_,_],
-  ["#fbbf24","#fbbf24","#ea580c","#ea580c","#000","#000","#ea580c","#ea580c","#ea580c","#c2410c",_,_],
-  ["#fbbf24","#fbbf24","#ea580c","#fff","#fff","#fff","#fff","#ea580c","#ea580c","#c2410c",_,_],
-  [_,"#fbbf24","#ea580c","#fbbf24","#ea580c","#ea580c","#ea580c","#fbbf24","#ea580c",_,_,_],
-  [_,"#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c",_,_,_],
-  ["#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c",_,_],
-  [_,"#ea580c","#fbbf24",_,"#ea580c","#fbbf24",_,"#ea580c","#fbbf24",_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const CHARMANDER_STAGE_3: PixelGrid = [
-  [_,_,"#fbbf24",_,_,"#7c2d12","#7c2d12",_,"#fbbf24","#fbbf24",_,_],
-  [_,"#fbbf24","#fbbf24","#fbbf24","#ea580c","#ea580c","#ea580c","#7c2d12","#fbbf24","#fbbf24",_,_],
-  ["#fbbf24","#fbbf24","#fbbf24","#ea580c","#fff","#fff","#ea580c","#ea580c","#ea580c","#7c2d12",_,_],
-  ["#fbbf24","#fbbf24","#ea580c","#ea580c","#000","#000","#ea580c","#ea580c","#ea580c","#7c2d12","#7c2d12",_],
-  ["#fbbf24","#fbbf24","#ea580c","#fff","#fff","#fff","#fff","#ea580c","#ea580c","#7c2d12","#7c2d12",_],
-  [_,"#fbbf24","#ea580c","#fbbf24","#ea580c","#ea580c","#ea580c","#fbbf24","#ea580c","#7c2d12",_,_],
-  [_,"#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#7c2d12",_,_],
-  ["#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#ea580c","#7c2d12",_],
-  ["#7c2d12","#ea580c","#fbbf24","#fbbf24","#ea580c","#fbbf24","#fbbf24","#ea580c","#fbbf24","#7c2d12",_,_],
-  [_,"#7c2d12","#7c2d12",_,"#7c2d12",_,_,"#7c2d12","#7c2d12",_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-/* ── SQUIRTLE (Water Type / Full-Stack) ── */
-const SQUIRTLE_STAGE_1: PixelGrid = [
-  [_,_,_,_,_,"#0369a1","#0369a1",_,_,_,_,_],
-  [_,_,_,"#0369a1","#0369a1","#0369a1","#0369a1","#0369a1",_,_,_,_],
-  [_,_,"#0369a1","#0369a1","#fff","#fff","#0369a1","#0369a1","#0369a1",_,_,_],
-  [_,"#0369a1","#0369a1","#fff","#000","#000","#fff","#0369a1","#0369a1","#0369a1",_,_],
-  [_,"#0369a1","#0369a1","#fff","#fff","#fff","#fff","#0369a1","#0369a1",_,_,_],
-  [_,_,"#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1",_,_,_,_],
-  [_,_,"#0369a1","#0369a1","#93c5fd","#93c5fd","#0369a1","#0369a1",_,_,_,_],
-  [_,"#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1",_,_,_],
-  [_,"#0369a1",_,_,"#0369a1",_,_,"#0369a1",_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const SQUIRTLE_STAGE_2: PixelGrid = [
-  [_,_,"#0369a1",_,_,"#0c4a6e","#0c4a6e",_,_,_,"#0369a1",_],
-  [_,"#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0c4a6e",_,_,"#0369a1","#0369a1"],
-  ["#0369a1","#0369a1","#0369a1","#fff","#fff","#0369a1","#0369a1","#0c4a6e","#0369a1","#0369a1","#0369a1",_],
-  ["#0369a1","#0369a1","#fff","#000","#000","#fff","#0369a1","#0c4a6e","#0369a1","#0369a1","#0369a1",_],
-  ["#0369a1","#0369a1","#fff","#fff","#fff","#fff","#0369a1","#0c4a6e","#0369a1",_,_,_],
-  ["#0c4a6e","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1",_,_,_],
-  ["#0c4a6e","#0369a1","#0369a1","#93c5fd","#93c5fd","#0369a1","#0369a1","#0369a1","#0369a1",_,_,_],
-  ["#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1",_,_],
-  ["#0369a1","#0369a1",_,_,"#0369a1","#93c5fd",_,"#0369a1","#93c5fd",_,_,_],
-  [_,"#0369a1",_,"#0369a1",_,_,_,"#0369a1",_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const SQUIRTLE_STAGE_3: PixelGrid = [
-  [_,"#0369a1","#0369a1","#0369a1",_,"#0c4a6e","#0c4a6e",_,"#0369a1","#0369a1","#0369a1",_],
-  ["#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0c4a6e","#0369a1","#0369a1","#0369a1","#0369a1"],
-  ["#0369a1","#0369a1","#0369a1","#fff","#fff","#0369a1","#0369a1","#0c4a6e","#0369a1","#0369a1","#0369a1","#0369a1"],
-  ["#0c4a6e","#0369a1","#fff","#000","#000","#fff","#0369a1","#0c4a6e","#0369a1","#0369a1","#0c4a6e","#0c4a6e"],
-  ["#0c4a6e","#0369a1","#fff","#fff","#fff","#fff","#0369a1","#0c4a6e","#0369a1","#0c4a6e","#0c4a6e","#0c4a6e"],
-  ["#0c4a6e","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0c4a6e",_,_],
-  ["#0c4a6e","#0369a1","#0369a1","#93c5fd","#93c5fd","#0369a1","#0369a1","#0369a1","#0369a1","#0c4a6e",_,_],
-  ["#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0369a1","#0c4a6e",_],
-  ["#0369a1","#0369a1","#0c4a6e",_,"#0369a1","#93c5fd","#93c5fd","#0369a1","#93c5fd","#0369a1","#0c4a6e",_],
-  ["#0c4a6e","#0369a1","#0c4a6e","#0369a1","#0c4a6e",_,_,"#0c4a6e","#0c4a6e","#0c4a6e",_,_],
-  [_,"#0c4a6e",_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-/* ── BULBASAUR (Grass Type / NLP) ── */
-const BULBASAUR_STAGE_1: PixelGrid = [
-  [_,_,_,_,"#166534","#166534",_,_,_,_,_,_],
-  [_,_,_,"#166534","#22c55e","#22c55e","#166534",_,_,_,_,_],
-  [_,_,"#166534","#22c55e","#22c55e","#22c55e","#166534","#166534",_,_,_,_],
-  [_,"#166534","#22c55e","#22c55e","#fff","#fff","#22c55e","#166534","#166534",_,_,_],
-  [_,"#166534","#22c55e","#fff","#000","#000","#fff","#22c55e","#166534",_,_,_],
-  [_,_,"#166534","#22c55e","#22c55e","#22c55e","#22c55e","#166534",_,_,_,_],
-  [_,_,"#166534","#22c55e","#22c55e","#22c55e","#166534",_,_,_,_,_],
-  [_,_,"#166534","#166534","#166534","#166534",_,_,_,_,_,_],
-  [_,_,"#22c55e",_,_,"#22c55e",_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const BULBASAUR_STAGE_2: PixelGrid = [
-  [_,"#22c55e",_,"#166534","#166534",_,_,"#166534","#166534",_,_,_],
-  ["#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#166534",_,"#22c55e","#22c55e","#22c55e",_,_],
-  ["#166534","#22c55e","#22c55e","#22c55e","#fff","#fff","#22c55e","#22c55e","#22c55e","#166534","#166534",_],
-  ["#166534","#22c55e","#22c55e","#fff","#000","#000","#fff","#22c55e","#166534","#22c55e","#166534","#166534"],
-  [_,"#166534","#22c55e","#fff","#fff","#fff","#fff","#22c55e","#166534","#22c55e","#166534",_],
-  [_,"#166534","#22c55e","#22c55e","#22c55e","#22c55e","#166534","#166534",_,"#166534",_,_],
-  [_,_,"#166534","#22c55e","#22c55e","#22c55e","#166534",_,_,_,_,_],
-  [_,_,"#166534","#166534","#166534","#166534",_,_,_,_,_,_],
-  [_,_,"#22c55e","#4ade80",_,"#22c55e","#4ade80",_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const BULBASAUR_STAGE_3: PixelGrid = [
-  ["#22c55e","#22c55e",_,"#166534","#166534","#166534",_,"#166534","#166534","#166534",_,_],
-  ["#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#22c55e","#166534",_],
-  ["#166534","#22c55e","#22c55e","#22c55e","#fff","#fff","#22c55e","#22c55e","#22c55e","#22c55e","#166534","#166534"],
-  ["#166534","#22c55e","#22c55e","#fff","#000","#000","#fff","#22c55e","#166534","#22c55e","#166534","#166534"],
-  ["#166534","#166534","#22c55e","#fff","#fff","#fff","#fff","#22c55e","#166534","#22c55e","#166534","#166534"],
-  [_,"#166534","#22c55e","#22c55e","#22c55e","#22c55e","#166534","#166534","#22c55e","#166534","#166534",_],
-  [_,"#166534","#166534","#22c55e","#22c55e","#22c55e","#166534","#22c55e","#22c55e","#166534",_,_],
-  [_,_,"#166534","#166534","#166534","#166534","#166534","#166534","#166534",_,_,_],
-  [_,_,"#22c55e","#4ade80","#4ade80","#22c55e","#4ade80","#4ade80","#22c55e",_,_,_],
-  [_,_,_,"#166534","#166534",_,"#166534","#166534",_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-/* ── PIKACHU (Electric Type / Full-Stack Master) ── */
-const PIKACHU_STAGE_1: PixelGrid = [
-  [_,_,_,_,"#fbbf24","#fbbf24",_,_,_,_,_,_],
-  [_,_,_,"#fbbf24","#fbbf24","#fbbf24","#fbbf24",_,_,_,_,_],
-  [_,_,"#fbbf24","#fbbf24","#fff","#fff","#fbbf24","#fbbf24",_,_,_,_],
-  [_,"#fbbf24","#fbbf24","#fff","#000","#000","#fff","#fbbf24","#fbbf24",_,_,_],
-  [_,"#fbbf24","#fbbf24","#fff","#fff","#fff","#fff","#fbbf24","#fbbf24",_,_,_],
-  [_,_,"#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24",_,_,_,_],
-  [_,"#000","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#000",_,_,_],
-  [_,"#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24",_,_,_],
-  [_,"#fbbf24","#000",_,"#fbbf24",_,_,"#fbbf24","#000",_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const PIKACHU_STAGE_2: PixelGrid = [
-  [_,_,"#fbbf24",_,_,"#ea580c","#ea580c",_,"#fbbf24","#fbbf24",_,_],
-  [_,"#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c","#fbbf24","#fbbf24",_,_],
-  ["#fbbf24","#fbbf24","#fbbf24","#fff","#fff","#fbbf24","#fbbf24","#ea580c","#fbbf24","#fbbf24","#fbbf24",_],
-  ["#fbbf24","#fbbf24","#fff","#000","#000","#fff","#fbbf24","#ea580c","#fbbf24","#fbbf24","#fbbf24",_],
-  ["#fbbf24","#fbbf24","#fff","#fff","#fff","#fff","#fbbf24","#ea580c","#fbbf24",_,_,_],
-  ["#ea580c","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c","#fbbf24",_,_,_],
-  ["#ea580c","#000","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#000","#ea580c",_,_],
-  ["#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c",_],
-  ["#fbbf24","#fbbf24","#000","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#000","#ea580c",_,_],
-  ["#ea580c","#ea580c",_,"#fbbf24",_,_,_,"#ea580c","#ea580c",_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-const PIKACHU_STAGE_3: PixelGrid = [
-  ["#ea580c","#ea580c","#fbbf24",_,"#fbbf24","#ea580c","#ea580c",_,"#fbbf24","#fbbf24","#ea580c","#ea580c"],
-  ["#ea580c","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c","#fbbf24","#fbbf24","#fbbf24","#ea580c"],
-  ["#fbbf24","#fbbf24","#fbbf24","#fff","#fff","#fbbf24","#fbbf24","#ea580c","#fbbf24","#fbbf24","#fbbf24","#fbbf24"],
-  ["#fbbf24","#fbbf24","#fff","#000","#000","#fff","#fbbf24","#ea580c","#fbbf24","#fbbf24","#ea580c","#ea580c"],
-  ["#fbbf24","#fbbf24","#fff","#fff","#fff","#fff","#fbbf24","#ea580c","#fbbf24","#ea580c","#ea580c","#ea580c"],
-  ["#ea580c","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c","#fbbf24","#ea580c",_,_],
-  ["#ea580c","#000","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#000","#ea580c",_,_],
-  ["#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c",_],
-  ["#fbbf24","#fbbf24","#000","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#000","#ea580c","#ea580c",_],
-  ["#ea580c","#ea580c","#ea580c","#fbbf24","#fbbf24","#fbbf24","#fbbf24","#ea580c","#ea580c","#ea580c",_,_],
-  ["#ea580c",_,"#ea580c",_,_,"#ea580c","#ea580c",_,"#ea580c",_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_],
-];
-
-/* ── Sprite Map ── */
-const SPRITE_MAP: Record<StarterType, Record<1 | 2 | 3, PixelGrid>> = {
-  charmander: { 1: CHARMANDER_STAGE_1, 2: CHARMANDER_STAGE_2, 3: CHARMANDER_STAGE_3 },
-  squirtle:   { 1: SQUIRTLE_STAGE_1,   2: SQUIRTLE_STAGE_2,   3: SQUIRTLE_STAGE_3 },
-  bulbasaur:  { 1: BULBASAUR_STAGE_1,  2: BULBASAUR_STAGE_2,  3: BULBASAUR_STAGE_3 },
-  pikachu:    { 1: PIKACHU_STAGE_1,    2: PIKACHU_STAGE_2,    3: PIKACHU_STAGE_3 },
-};
-
-/* ── Build box-shadow string from grid ── */
-function buildBoxShadow(grid: PixelGrid, scale: number): string {
-  const shadows: string[] = [];
-  grid.forEach((row, y) => {
-    row.forEach((color, x) => {
-      if (color) {
-        shadows.push(`${x * scale}px ${y * scale}px 0 0 ${color}`);
-      }
-    });
-  });
-  return shadows.join(",");
-}
-
-/* ── Component ── */
 interface PixelSpriteProps {
   starter: StarterType;
   stage: EvolutionStage;
@@ -232,41 +24,67 @@ interface PixelSpriteProps {
 }
 
 function PixelSpriteInner({ starter, stage, scale = 4, className = "" }: PixelSpriteProps) {
-  const numericStage = stage === "shiny" ? 3 : stage;
-  
-  // Defensive check: ensure starter exists in SPRITE_MAP
-  if (!starter || !SPRITE_MAP[starter]) {
+  const [imgError, setImgError] = useState(false);
+
+  // Defensive check: ensure starter is valid
+  const validStarters = ["charmander", "squirtle", "bulbasaur", "pikachu"];
+  if (!starter || !validStarters.includes(starter)) {
     console.warn(`PixelSprite: Invalid starter "${starter}". Using pikachu as fallback.`);
     return null;
   }
-  
-  const grid = SPRITE_MAP[starter][numericStage];
-  
-  // Defensive check: ensure stage exists
-  if (!grid) {
-    console.warn(`PixelSprite: No sprite for starter "${starter}" at stage ${numericStage}`);
-    return null;
-  }
-  
-  const boxShadow = buildBoxShadow(grid, scale);
+
   const isShiny = stage === "shiny";
+  const spriteUrl = getPokemonSpriteUrl(starter, stage);
+  const pokemonName = getEvolutionName(starter, stage);
+
+  // Size based on scale — maintains backwards compatibility
+  // Old pixel art was 12×scale px, new images scale similarly
+  const size = scale * 12;
+
+  // Fallback emoji if image fails to load
+  const FALLBACK_EMOJI: Record<StarterType, string> = {
+    charmander: "🔥",
+    squirtle: "💧",
+    bulbasaur: "🌿",
+    pikachu: "⚡",
+  };
+
+  if (imgError || !spriteUrl) {
+    return (
+      <div
+        className={`relative inline-flex items-center justify-center ${className}`}
+        style={{ width: size, height: size }}
+        aria-label={`${pokemonName}, evolution stage ${stage}`}
+      >
+        <span style={{ fontSize: size * 0.5 }}>{FALLBACK_EMOJI[starter] || "❓"}</span>
+      </div>
+    );
+  }
 
   return (
     <div
       className={`relative inline-block ${className}`}
-      style={{ width: 12 * scale, height: 12 * scale }}
-      aria-label={`${starter} starter, evolution stage ${stage}`}
+      style={{ width: size, height: size }}
+      aria-label={`${pokemonName}, evolution stage ${stage}`}
     >
-      <div
+      {/* Pokemon artwork image */}
+      <Image
+        src={spriteUrl}
+        alt={pokemonName}
+        width={size}
+        height={size}
+        className="object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
         style={{
-          width: scale,
-          height: scale,
-          boxShadow,
-          position: "absolute",
-          top: 0,
-          left: 0,
+          imageRendering: "auto",
+          filter: isShiny
+            ? "drop-shadow(0 0 8px rgba(251,191,36,0.6)) saturate(1.3) brightness(1.1)"
+            : "none",
+          transition: "filter 0.3s ease",
         }}
+        onError={() => setImgError(true)}
+        unoptimized
       />
+
       {/* Shiny sparkle overlay */}
       {isShiny && (
         <>
@@ -275,8 +93,8 @@ function PixelSpriteInner({ starter, stage, scale = 4, className = "" }: PixelSp
             style={{
               top: -2,
               right: -2,
-              width: scale * 2,
-              height: scale * 2,
+              width: Math.max(scale * 2, 8),
+              height: Math.max(scale * 2, 8),
               background: "#fbbf24",
               borderRadius: "50%",
               opacity: 0.6,
@@ -287,12 +105,25 @@ function PixelSpriteInner({ starter, stage, scale = 4, className = "" }: PixelSp
             style={{
               bottom: scale * 2,
               left: -2,
-              width: scale * 1.5,
-              height: scale * 1.5,
+              width: Math.max(scale * 1.5, 6),
+              height: Math.max(scale * 1.5, 6),
               background: "#fbbf24",
               borderRadius: "50%",
               opacity: 0.4,
               animationDelay: "0.5s",
+            }}
+          />
+          <div
+            className="absolute animate-ping"
+            style={{
+              top: "40%",
+              right: -4,
+              width: Math.max(scale * 1.2, 5),
+              height: Math.max(scale * 1.2, 5),
+              background: "#fde68a",
+              borderRadius: "50%",
+              opacity: 0.5,
+              animationDelay: "1s",
             }}
           />
         </>

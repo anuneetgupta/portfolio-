@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGameStore, getXPForNextStage, getStageLabel, XP_THRESHOLDS } from "@/lib/gameStore";
+import { useGameStore, getXPForNextStage, getStageLabel, getEvolutionName, XP_THRESHOLDS } from "@/lib/gameStore";
 import PixelSprite from "./PixelSprite";
 import { ChevronDown, ChevronUp, Mail, Download, Sparkles } from "lucide-react";
 
@@ -55,6 +55,7 @@ export default function GameHUD() {
 
   const { next, label } = getXPForNextStage(xp);
   const stageLabel = getStageLabel(evolutionStage);
+  const pokemonName = getEvolutionName(starter, evolutionStage);
 
   // XP bar percentage (within current stage) — guard against division by zero at shiny
   const prevThreshold =
@@ -111,7 +112,7 @@ export default function GameHUD() {
                   className="text-[10px] font-bold uppercase tracking-wider"
                   style={{ color: accentColors.primaryLight }}
                 >
-                  Lv.{evolutionStage === "shiny" ? "★" : evolutionStage}
+                  {pokemonName} Lv.{evolutionStage === "shiny" ? "★" : evolutionStage}
                 </span>
               )}
             </div>

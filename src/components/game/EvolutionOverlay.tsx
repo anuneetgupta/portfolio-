@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGameStore } from "@/lib/gameStore";
+import { useGameStore, getEvolutionName } from "@/lib/gameStore";
 import PixelSprite from "./PixelSprite";
 
 /* ─────────────────────────────────────────────────────────
@@ -50,10 +50,12 @@ export default function EvolutionOverlay() {
 
   if (!starter || !isEvolving) return null;
 
+  const evolvedName = getEvolutionName(starter, evolutionStage);
+  const prevName = getEvolutionName(starter, prevEvolutionStage);
   const stageName =
     evolutionStage === "shiny"
-      ? "Shiny Form"
-      : `Stage ${evolutionStage}`;
+      ? `✨ ${evolvedName} (Shiny)`
+      : evolvedName;
 
   const stageDescription =
     evolutionStage === 2
@@ -109,7 +111,7 @@ export default function EvolutionOverlay() {
             >
               What?{" "}
               <span style={{ color: accentColors.primaryLight }}>
-                {starter.charAt(0).toUpperCase() + starter.slice(1)}
+                {prevName}
               </span>{" "}
               is evolving!
             </p>
@@ -160,6 +162,9 @@ export default function EvolutionOverlay() {
               }}
             >
               Evolved to {stageName}!
+            </p>
+            <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+              {prevName} → {evolvedName}
             </p>
             <p className="text-sm text-gray-400">{stageDescription}</p>
             <motion.p

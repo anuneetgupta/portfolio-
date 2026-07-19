@@ -130,7 +130,7 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* ── GYM LEADER 1: SAMARPAN ── */}
+        {/* ── GYM LEADER 1: QYRO ── */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -159,7 +159,7 @@ export default function Projects() {
                     </span>
                     <div className="mt-1 flex items-center gap-2">
                       <span className="px-2 py-0.5 rounded bg-red-900/50 border border-red-700 text-red-400 text-xs font-bold italic" style={{ fontFamily: "var(--font-pixel), monospace" }}>VS</span>
-                      <span className="text-white font-bold tracking-widest uppercase">Leader Samarpan</span>
+                      <span className="text-white font-bold tracking-widest uppercase">Leader Qyro</span>
                     </div>
                   </div>
                 </div>
@@ -167,7 +167,7 @@ export default function Projects() {
               <div className="inline-block px-4 py-2 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-sm font-semibold tracking-wider uppercase mb-4">
                 🏆 Ideathon Winner 2026
               </div>
-              <h3 className="text-5xl font-bold mb-4 text-white">SAMARPAN</h3>
+              <h3 className="text-5xl font-bold mb-4 text-white">QYRO</h3>
               <p className="text-xl text-gray-400 leading-relaxed">
                 A comprehensive AI-driven platform for automated quiz generation from PDFs combined with advanced Computer Vision proctoring.
               </p>
@@ -245,17 +245,20 @@ export default function Projects() {
             </div>
 
             <div className="flex flex-wrap gap-4 pt-2">
-              <button
-                onClick={() => addXP(15, "project-samarpan-demo")}
+              <a
+                href="https://qyroarena.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => addXP(15, "project-qyro-live")}
                 className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
               >
-                <PlayCircle className="w-5 h-5" /> Live Demo
-              </button>
+                <ExternalLink className="w-5 h-5" /> Visit Qyro
+              </a>
               <a
                 href="https://github.com/anuneetgupta"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => addXP(15, "project-samarpan-github")}
+                onClick={() => addXP(15, "project-qyro-github")}
                 className="px-6 py-3 bg-gray-800 text-white font-semibold rounded-xl hover:bg-gray-700 transition-colors flex items-center gap-2 border border-gray-700"
               >
                 <GitBranch className="w-5 h-5" /> GitHub
@@ -263,14 +266,16 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* Visual placeholder */}
-          <div className="relative w-full aspect-video rounded-2xl bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-800/30 flex flex-col items-center justify-center overflow-hidden cursor-pointer group/vid z-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 group-hover/vid:from-blue-600/10 group-hover/vid:to-purple-600/10 transition-all duration-500" />
-            <div className="absolute inset-0 opacity-10"
-              style={{ backgroundImage: "linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
+          {/* Video Player */}
+          <div className="relative w-full aspect-video rounded-2xl bg-black border border-blue-800/30 overflow-hidden z-10">
+            <video
+              src="/videos/iqrp%20demo.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
             />
-            <PlayCircle className="w-16 h-16 text-blue-400/60 group-hover/vid:text-blue-400 group-hover/vid:scale-110 transition-all z-10" />
-            <p className="mt-4 text-gray-500 font-medium z-10 text-sm">Demo Coming Soon</p>
           </div>
         </motion.div>
 
@@ -286,26 +291,16 @@ export default function Projects() {
         >
           {showGameMode && <div className="scanline-overlay absolute inset-0 z-0 opacity-30" />}
 
-          {/* Architecture Visual */}
-          <div className="order-2 lg:order-1 relative w-full aspect-square md:aspect-video lg:aspect-square rounded-2xl bg-gradient-to-bl from-green-900/20 to-gray-900 border border-green-800/30 flex flex-col items-center justify-center overflow-hidden z-10">
-            <div className="absolute inset-0 opacity-10"
-              style={{ backgroundImage: "linear-gradient(rgba(16,185,129,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.3) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
+          {/* Video Player */}
+          <div className="order-2 lg:order-1 relative w-full aspect-square md:aspect-video lg:aspect-square rounded-2xl bg-black border border-green-800/30 overflow-hidden z-10">
+            <video
+              src="/videos/dharma%20setu%20demo%20.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
             />
-            <div className="relative z-10 flex flex-col items-center gap-3 w-full px-8">
-              {[
-                { label: "User Interface (React)", color: "border-green-500/50 bg-green-900/20 text-green-300" },
-                { label: "LangChain Orchestrator", color: "border-blue-500/50 bg-blue-900/20 text-blue-300" },
-                { label: "Vector DB (Supabase)", color: "border-purple-500/50 bg-purple-900/20 text-purple-300" },
-                { label: "Bhagavad Gita / Ramayana Corpus", color: "border-yellow-500/50 bg-yellow-900/20 text-yellow-300" },
-              ].map((layer, i) => (
-                <div key={i} className="w-full">
-                  <div className={`px-4 py-2 rounded-lg border text-center text-xs font-semibold ${layer.color}`}>
-                    {layer.label}
-                  </div>
-                  {i < 3 && <div className="flex justify-center py-0.5"><div className="w-px h-3 bg-gray-600" /></div>}
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="space-y-8 order-1 lg:order-2 relative z-10">
