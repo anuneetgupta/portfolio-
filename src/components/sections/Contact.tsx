@@ -69,26 +69,39 @@ export default function Contact() {
 
   const showGameMode = hasSelectedStarter && !plainMode;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     // Award XP for contact form submission
     addXP(20, "contact-form-submit");
 
-    // Build mailto link and open it
-    const subject = encodeURIComponent(`Portfolio Contact from ${formState.name}`);
-    const body    = encodeURIComponent(
-      `Hi Anuneet,\n\nMy name is ${formState.name}.\n\n${formState.message}\n\nBest,\n${formState.name}\n${formState.email}`
-    );
-    window.open(`mailto:guptaanuneet10june@gmail.com?subject=${subject}&body=${body}`, "_blank");
+    try {
+      // Send the email directly using FormSubmit AJAX
+      await fetch("https://formsubmit.co/ajax/guptaanuneet10june@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          _subject: `New Portfolio Message from ${formState.name}`,
+          _template: "box",
+        }),
+      });
 
-    setTimeout(() => {
-      setIsSubmitting(false);
       setSubmitted(true);
       setFormState({ name: "", email: "", message: "" });
       setTimeout(() => setSubmitted(false), 5000);
-    }, 800);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      alert("Failed to send message. Please try emailing directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -170,8 +183,8 @@ export default function Contact() {
                   </h3>
                   <p className="text-gray-400 text-center max-w-xs">
                     {showGameMode
-                      ? "+20 XP earned! Your email client opened. Let's connect!"
-                      : "Your email client opened. Looking forward to chatting with you!"}
+                      ? "+20 XP earned! Your message was sent directly to my inbox."
+                      : "Your message has been sent successfully. I'll get back to you soon!"}
                   </p>
                 </motion.div>
               )}
