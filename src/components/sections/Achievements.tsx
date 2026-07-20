@@ -53,10 +53,34 @@ function TrophyModel() {
 }
 
 const CERTIFICATES = [
-  { title: "Ideathon Winner 2026", org: "CSJMUIF Innovation Foundation", color: "border-yellow-500/40 bg-yellow-900/10 text-yellow-400", gameLabel: "TM01" },
+  { 
+    title: "SIH 2024 University Round Clear", 
+    org: "Smart India Hackathon", 
+    color: "border-blue-500/40 bg-blue-900/10 text-blue-400", 
+    gameLabel: "HM02",
+    desc: "Successfully cleared the internal university round for Smart India Hackathon.",
+    link: "/sih-certificate.pdf"
+  },
+  { 
+    title: "Open Source Contribution (2nd Rank)", 
+    org: "Kanpur Space AI Osthon", 
+    color: "border-purple-500/40 bg-purple-900/10 text-purple-400", 
+    gameLabel: "HM03",
+    desc: "Secured 2nd rank for significant open-source contributions during the Osthon event.",
+    link: "/osthon-certificate.pdf"
+  },
+  { 
+    title: "AWS Tech Quiz Winner", 
+    org: "AWS Kanpur", 
+    color: "border-orange-500/40 bg-orange-900/10 text-orange-400", 
+    gameLabel: "HM04",
+    desc: "Emerged as the winner in the technical quiz organized by the AWS Kanpur community.",
+    link: "/aws-quiz-certificate.pdf"
+  },
+  { title: "Ideathon Winner 2026", org: "CSJMUIF Innovation Foundation", color: "border-yellow-500/40 bg-yellow-900/10 text-yellow-400", gameLabel: "TM01", desc: "Secured 3rd rank by pitching the Samarpan AI system.", link: "/ideathon-certificate.pdf" },
   { title: "Evolothon Finalist Certificate", org: "Evolotek", color: "border-indigo-500/40 bg-indigo-900/10 text-indigo-400", gameLabel: "TM02" },
   { title: "Learn Python Certification", org: "Geekster", color: "border-green-500/40 bg-green-900/10 text-green-400", gameLabel: "TM03" },
-  { title: "ChatGPT Bootcamp", org: "LetsUpgrade & NSDC", color: "border-orange-500/40 bg-orange-900/10 text-orange-400", gameLabel: "TM04" },
+  { title: "ChatGPT Bootcamp", org: "LetsUpgrade & NSDC", color: "border-pink-500/40 bg-pink-900/10 text-pink-400", gameLabel: "TM04" },
   { title: "TRIPS 2025 Summit", org: "IIT Kanpur", color: "border-red-500/40 bg-red-900/10 text-red-400", gameLabel: "HM01" },
 ];
 
@@ -196,15 +220,22 @@ export default function Achievements() {
                 Secured the 3rd rank by pitching and presenting the <span className="text-white font-medium">Samarpan</span> AI proctoring and quiz generation system. Recognized for innovation, technical execution, and real-world applicability.
               </p>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-black/30 border border-yellow-700/20">
-                <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
+              <a 
+                href="/ideathon-certificate.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 p-4 rounded-2xl bg-black/30 border border-yellow-700/20 hover:bg-yellow-900/20 hover:border-yellow-500/40 transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <Award className="w-5 h-5 text-yellow-500" />
                 </div>
-                <div>
-                  <p className="text-white font-bold text-sm">Certificate of Excellence</p>
-                  <p className="text-xs text-gray-500">Verified by CSJMUIF Innovation Foundation</p>
+                <div className="flex-1">
+                  <p className="text-white font-bold text-sm flex items-center gap-2">
+                    Certificate of Appreciation <ExternalLink className="w-3.5 h-3.5 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </p>
+                  <p className="text-xs text-gray-500">View Official Certificate</p>
                 </div>
-              </div>
+              </a>
             </div>
 
             {/* Certificate Showcase — styled as TM/HM in game mode */}
@@ -221,25 +252,48 @@ export default function Achievements() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => setActiveCard(i)}
-                    className={`flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all ${
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                       activeCard === i
                         ? cert.color
                         : "bg-gray-900/40 border-gray-800 hover:border-gray-700"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      {showGameMode && (
-                        <span className="text-[10px] font-bold text-gray-500" style={{ fontFamily: "var(--font-pixel), monospace" }}>
-                          {cert.gameLabel}
-                        </span>
-                      )}
-                      <Award className={`w-5 h-5 ${activeCard === i ? cert.color.split(" ")[2] : "text-gray-600"}`} />
-                      <div>
-                        <p className="font-semibold text-sm text-white">{cert.title}</p>
-                        <p className="text-xs text-gray-500">{cert.org}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {showGameMode && (
+                          <span className="text-[10px] font-bold text-gray-500" style={{ fontFamily: "var(--font-pixel), monospace" }}>
+                            {cert.gameLabel}
+                          </span>
+                        )}
+                        <Award className={`w-5 h-5 ${activeCard === i ? cert.color.split(" ")[2] : "text-gray-600"}`} />
+                        <div>
+                          <p className="font-semibold text-sm text-white">{cert.title}</p>
+                          <p className="text-xs text-gray-500">{cert.org}</p>
+                        </div>
                       </div>
+                      <ExternalLink className={`w-4 h-4 shrink-0 ${activeCard === i ? cert.color.split(" ")[2] : "text-gray-600"}`} />
                     </div>
-                    <ExternalLink className="w-4 h-4 text-gray-600 shrink-0" />
+
+                    {/* Expandable Details */}
+                    {activeCard === i && (cert.desc || cert.link) && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }} 
+                        animate={{ opacity: 1, height: "auto" }} 
+                        className="mt-4 pt-3 border-t border-current/20 overflow-hidden"
+                      >
+                        {cert.desc && <p className="text-sm opacity-90 mb-3 leading-relaxed">{cert.desc}</p>}
+                        {cert.link && (
+                          <a 
+                            href={cert.link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider hover:opacity-75 transition-opacity"
+                          >
+                            View Certificate <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </motion.div>
+                    )}
                   </motion.div>
                 ))}
               </div>

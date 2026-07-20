@@ -8,6 +8,36 @@ import { useGameStore } from "@/lib/gameStore";
 const experiences = [
   {
     id: 1,
+    role: "AI Intern",
+    company: "CSJMU",
+    location: "Kanpur, UP",
+    period: "Present",
+    type: "work",
+    highlight: "Active",
+    highlightColor: "text-green-400",
+    description: [
+      "Currently working as an AI Intern, exploring and developing artificial intelligence solutions."
+    ],
+    healingLabel: "⚡ Max Revive — Active Quest",
+  },
+  {
+    id: 2,
+    role: "AI & Machine Learning Intern",
+    company: "SKP Sainik Public School",
+    location: "Salempur, Deoria, UP",
+    period: "Apr 2026 - May 2026",
+    type: "work",
+    highlight: "Completed",
+    highlightColor: "text-yellow-400",
+    description: [
+      "Conducted interactive workshops on Artificial Intelligence and Machine Learning for students.",
+      "Introduced fundamental AI/ML concepts through practical demonstrations and hands-on activities."
+    ],
+    healingLabel: "💡 Rare Candy — EXP Gained",
+    certLink: "/skp-internship-certificate.jpg",
+  },
+  {
+    id: 3,
     role: "Bachelor of Computer Applications (BCA)",
     company: "CSJMU, Kanpur",
     location: "Kanpur, UP",
@@ -23,7 +53,7 @@ const experiences = [
     healingLabel: "💊 Full Restore — Active Quest",
   },
   {
-    id: 2,
+    id: 4,
     role: "Intermediate — PCM",
     company: "Air Force School",
     location: "Gorakhpur, UP",
@@ -38,7 +68,7 @@ const experiences = [
     healingLabel: "💊 Super Potion — Completed",
   },
   {
-    id: 3,
+    id: 5,
     role: "High School",
     company: "Stepping Stone Inter College",
     location: "Gorakhpur, UP",
@@ -134,6 +164,16 @@ export default function Experience() {
                     </li>
                   ))}
                 </ul>
+                {(exp as any).certLink && (
+                  <a 
+                    href={(exp as any).certLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors font-semibold"
+                  >
+                    View Certificate <ChevronRight className="w-4 h-4" />
+                  </a>
+                )}
               </motion.div>
             ))}
           </div>
@@ -202,6 +242,16 @@ export default function Experience() {
                           </li>
                         ))}
                       </ul>
+                      {(exp as any).certLink && (
+                        <a 
+                          href={(exp as any).certLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 hover:border-gray-600 transition-colors text-sm font-semibold text-gray-300 hover:text-white"
+                        >
+                          View Certificate <ChevronRight className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </motion.div>

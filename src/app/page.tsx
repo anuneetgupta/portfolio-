@@ -14,6 +14,7 @@ import Skills          from "@/components/sections/Skills";
 import Projects        from "@/components/sections/Projects";
 import Achievements    from "@/components/sections/Achievements";
 import Experience      from "@/components/sections/Experience";
+import Extracurriculars from "@/components/sections/Extracurriculars";
 import Blog            from "@/components/sections/Blog";
 import Contact         from "@/components/sections/Contact";
 import RecruiterView   from "@/components/sections/RecruiterView";
@@ -37,7 +38,7 @@ function SectionXPTracker() {
   const addXP = useGameStore((s) => s.addXP);
 
   useEffect(() => {
-    const sectionIds = ["hero", "about", "skills", "projects", "achievements", "experience", "blog", "contact"];
+    const sectionIds = ["hero", "about", "skills", "projects", "achievements", "extracurriculars", "experience", "blog", "contact"];
     const observers: IntersectionObserver[] = [];
 
     sectionIds.forEach((id) => {
@@ -60,20 +61,22 @@ function SectionXPTracker() {
     const handleResumeClick = () => addXP(25, "download-resume");
     resumeLinks.forEach((link) => link.addEventListener("click", handleResumeClick));
 
-    // Track external project link clicks
-    const projectLinks = document.querySelectorAll('a[target="_blank"]');
-    const handleProjectClick = (e: Event) => {
+    // Track external link clicks (projects and certificates)
+    const externalLinks = document.querySelectorAll('a[target="_blank"]');
+    const handleExternalLinkClick = (e: Event) => {
       const href = (e.currentTarget as HTMLAnchorElement)?.href || "";
       if (href.includes("github") || href.includes("vercel")) {
         addXP(15, `project-link-${href}`);
+      } else if (href.includes("certificate") || href.includes(".pdf") || href.includes(".jpg") || href.includes(".png")) {
+        addXP(25, `view-certificate-${href}`);
       }
     };
-    projectLinks.forEach((link) => link.addEventListener("click", handleProjectClick as EventListener));
+    externalLinks.forEach((link) => link.addEventListener("click", handleExternalLinkClick as EventListener));
 
     return () => {
       observers.forEach((o) => o.disconnect());
       resumeLinks.forEach((link) => link.removeEventListener("click", handleResumeClick));
-      projectLinks.forEach((link) => link.removeEventListener("click", handleProjectClick as EventListener));
+      externalLinks.forEach((link) => link.removeEventListener("click", handleExternalLinkClick as EventListener));
     };
   }, [visitSection, addXP]);
 
@@ -123,6 +126,7 @@ export default function Home() {
             <section id="skills"><Skills /></section>
             <section id="projects"><Projects /></section>
             <section id="achievements"><Achievements /></section>
+            <section id="extracurriculars"><Extracurriculars /></section>
             <section id="experience"><Experience /></section>
             <section id="blog"><Blog /></section>
             <section id="contact"><Contact /></section>
